@@ -293,6 +293,38 @@ async function runRobot(aktifData) {
                                 );
                             clickElement(btnLanjutKuotaHabis);
 
+                            try {
+                                const msgPopup = await waitForElementAsync(
+                                    X_PATH.MSG_POPUP
+                                );
+                                if (msgPopup) {
+                                    console.log("MSGPOPUP found", msgPopup);
+                                    const text = msgPopup.textContent.trim();
+                                    if (
+                                        text.includes(
+                                            "Pembatasan Umur Pemeriksaan"
+                                        )
+                                    ) {
+                                        console.log(
+                                            "Message found: Pembatasan Umur Pemeriksaan"
+                                        );
+
+                                        return {
+                                            success: false,
+                                            message:
+                                                "Pembatasan Umur Pemeriksaan",
+                                            pembatasanUmurPemeriksaan: true,
+                                        };
+                                    } else {
+                                        return {
+                                            success: false,
+                                            message: text,
+                                            lainnya: true,
+                                        };
+                                    }
+                                }
+                            } catch (err) {}
+
                             if (inData.nik) {
                                 // CLICK PILIH
                                 const btnPilihPeserta =
@@ -361,6 +393,29 @@ async function runRobot(aktifData) {
                                             message:
                                                 "Peserta Menerima Pemeriksaan",
                                             sudahDidaftarkan: true,
+                                        };
+                                    } else if (
+                                        text.includes(
+                                            "Pembatasan Umur Pemeriksaan"
+                                        )
+                                    ) {
+                                        console.log(
+                                            "Message found: Pembatasan Umur Pemeriksaan"
+                                        );
+
+                                        return {
+                                            success: false,
+                                            message:
+                                                "Pembatasan Umur Pemeriksaan",
+                                            pembatasanUmurPemeriksaan: true,
+                                        };
+                                    } else {
+                                        console.log("Message found: ", text);
+
+                                        return {
+                                            success: false,
+                                            message: text,
+                                            lainnya: true,
                                         };
                                     }
                                 }
@@ -498,6 +553,8 @@ document.getElementById("runBtn").addEventListener("click", async () => {
             : result?.sudahDidaftarkan
             ? "Double Data"
             : result?.noNik
+            ? "Lainnya"
+            : result?.pembatasanUmurPemeriksaan
             ? "Lainnya"
             : result?.lainnya
             ? "Lainnya"

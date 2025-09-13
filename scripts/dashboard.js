@@ -63,7 +63,7 @@ function loadDataTableLogs() {
 loadDataTableLogs();
 
 document
-    .getElementById("downloadExcelBtn")
+    .getElementById("downloadExcelLogBtn")
     .addEventListener("click", async () => {
         const logsData = JSON.parse(
             localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
@@ -91,6 +91,68 @@ document
 
         // Reorder each object based on columns
         const reorderedData = logsData.map((item) => {
+            let obj = {};
+            columns.forEach((col) => {
+                obj[col] = item[col] || "";
+            });
+            return obj;
+        });
+
+        // Create worksheet
+        const ws = XLSX.utils.json_to_sheet(reorderedData, { header: columns });
+
+        // Create workbook and append sheet
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Histories");
+
+        // Download Excel
+        XLSX.writeFile(wb, `CKG-ROBOT-HISTORY.xlsx`);
+    });
+
+document
+    .getElementById("downloadExcelBtn")
+    .addEventListener("click", async () => {
+        const aktifData = JSON.parse(
+            localStorage.getItem(LOCAL_STORAGE.AKTIF_DATA) || "[]"
+        );
+        const logsData = JSON.parse(
+            localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+        );
+        const columns = [
+            "no",
+            "status",
+            "keterangan",
+            "daftar",
+            "hadir",
+            "pemeriksaan",
+            "rapor",
+            "tanggal_pemeriksaan",
+            "nik",
+            "nama",
+            "tgl_lahir",
+            "jenis_kelamin",
+            "no_wa",
+            "alamat",
+            "provinsi",
+            "kabkota",
+            "kecamatan",
+            "keldesa",
+        ];
+
+        const theData = aktifData.map((item) => {
+            const iLog = logsData.find((it) => it.no == item.no) || {};
+            return {
+                no: item.no,
+                nik: item.nik,
+                nama: item.nama,
+                tgl_lahir: item.tgl_lahir,
+                jenis_kelamin: item.jenis_kelamin,
+                ...iLog,
+            };
+        });
+
+        // Reorder each object based on columns
+        const reorderedData = theData.map((item) => {
             let obj = {};
             columns.forEach((col) => {
                 obj[col] = item[col] || "";

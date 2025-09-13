@@ -147,7 +147,7 @@ function loadDataTable() {
             const tbody = document.getElementById("dataBody");
             tbody.innerHTML = "";
             theData.forEach((item) => {
-                const log = logsData.find((it) => it.no === item.no);
+                const log = logsData.find((it) => it.no == item.no);
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${item.no}</td>
@@ -180,7 +180,7 @@ function getAktifData() {
         const result = validateJSONData(theData);
         if (result.valid) {
             theData.forEach((item) => {
-                const find = logsData.find((it) => it.no === item.no);
+                const find = logsData.find((it) => it.no == item.no);
                 if (!find) {
                     aktifData.push(item);
                 }
@@ -200,7 +200,7 @@ function getPemeriksaanData() {
         const result = validateJSONData(theData);
         if (result.valid) {
             theData.forEach((item) => {
-                const find = logsData.find((it) => it.no === item.no);
+                const find = logsData.find((it) => it.no == item.no);
                 if (find) {
                     if (
                         find?.status === "--On Progress--" &&
