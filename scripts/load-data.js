@@ -22,6 +22,49 @@ function loadExistingAktifData() {
 
 loadExistingAktifData();
 
+function checkNikValidity(cleanJson = []) {
+    const logsData = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+    );
+    const defData = getDefaultData();
+
+    cleanJson.forEach((iData) => {
+        let iMessage = "";
+        if (!iData.nik) {
+            iMessage = "Tidak Ada NIK";
+        } else if (!isValidNIK(iData.nik)) {
+            iMessage = "NIK Tidak Valid";
+        }
+
+        if (iMessage) {
+            const find = logsData.find((it) => it.no === iData.no);
+            if (find) {
+                find.status = "Lainnya";
+                find.keterangan = iMessage;
+                find.daftar = "Gagal";
+                find.hadir = "Tidak";
+            } else {
+                logsData.push({
+                    ...defData,
+                    no: iData.no,
+                    nik: iData.nik,
+                    nama: iData.nama,
+                    tgl_lahir: iData.tgl_lahir,
+                    jenis_kelamin: iData.jenis_kelamin,
+                    alamat: iData.alamat || defData.alamat,
+                    no_wa: iData.no_hp || defData.no_wa,
+                    status: "Lainnya",
+                    keterangan: iMessage,
+                    daftar: "Gagal",
+                    hadir: "Tidak",
+                });
+            }
+        }
+    });
+
+    localStorage.setItem(LOCAL_STORAGE.LOGS, JSON.stringify(logsData));
+}
+
 document.getElementById("convertBtn").addEventListener("click", () => {
     const fileInput = document.getElementById("excelFile");
     const output = document.getElementById("output");
@@ -50,9 +93,17 @@ document.getElementById("convertBtn").addEventListener("click", () => {
         disableRunBtn(result.valid);
 
         if (result.valid) {
+            const cleanJson = json.map((it) => {
+                return {
+                    ...it,
+                    tgl_lahir: toDDMMYYYY(it.tgl_lahir),
+                };
+            });
+            checkNikValidity(cleanJson);
+
             localStorage.setItem(
                 LOCAL_STORAGE.AKTIF_DATA,
-                JSON.stringify(json)
+                JSON.stringify(cleanJson)
             );
 
             loadDataTable();
@@ -136,6 +187,54 @@ document.getElementById("btnSaveDefault").addEventListener("click", () => {
     alert("Data berhasil disimpan!");
 });
 
+function tandaiLainnya(no) {
+    console.log("Tandai lainnya:", no);
+
+    const logsData = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+    );
+    const defData = getDefaultData();
+
+    const find = logsData.find((it) => it.no === no);
+    if (find) {
+        find.status = "Lainnya";
+        find.keterangan = "Ditandai Lainnya";
+    } else {
+        logsData.push({
+            ...defData,
+            no: no,
+            status: "Lainnya",
+            keterangan: "Ditandai Lainnya",
+        });
+    }
+    localStorage.setItem(LOCAL_STORAGE.LOGS, JSON.stringify(logsData));
+    loadDataTable();
+}
+
+function tandaiPemeriksaanManual(no) {
+    console.log("Tandai pemeriksaan manual:", no);
+
+    const logsData = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+    );
+    const defData = getDefaultData();
+
+    const find = logsData.find((it) => it.no === no);
+    if (find) {
+        find.status = "Berhasil Input";
+        find.keterangan = "PEMERIKSAAN MANUAL";
+    } else {
+        logsData.push({
+            ...defData,
+            no: no,
+            status: "Berhasil Input",
+            keterangan: "PEMERIKSAAN MANUAL",
+        });
+    }
+    localStorage.setItem(LOCAL_STORAGE.LOGS, JSON.stringify(logsData));
+    loadDataTable();
+}
+
 function loadDataTable() {
     const storedData = localStorage.getItem(LOCAL_STORAGE.AKTIF_DATA);
     const logsStringData = localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]";
@@ -148,8 +247,21 @@ function loadDataTable() {
             tbody.innerHTML = "";
             theData.forEach((item) => {
                 const log = logsData.find((it) => it.no == item.no);
+                const btnId = `dropdownMenuButton-${item.no}`;
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-warning dropdown-toggle" type="button"
+                                    id="${btnId}" data-bs-toggle="dropdown" aria-expanded="false">
+                                Aksi
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="${btnId}">
+                                <li><a class="dropdown-item tandai-lainnya" href="#">Tandai Lainnya</a></li>
+                                <li><a class="dropdown-item tandai-pemeriksaan" href="#">Tandai Pemeriksaan Manual</a></li>
+                            </ul>
+                        </div>
+                    </td>
                     <td>${item.no}</td>
                     <td>${item.nik}</td>
                     <td>${item.nama}</td>
@@ -163,6 +275,15 @@ function loadDataTable() {
                     <td>${log?.rapor || "-"}</td>
                     `;
                 tbody.appendChild(tr);
+
+                tr.querySelector(".tandai-lainnya").addEventListener(
+                    "click",
+                    () => tandaiLainnya(item.no)
+                );
+                tr.querySelector(".tandai-pemeriksaan").addEventListener(
+                    "click",
+                    () => tandaiPemeriksaanManual(item.no)
+                );
             });
         }
     }

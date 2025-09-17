@@ -15,7 +15,8 @@ async function runRobot(aktifData) {
     await chrome.scripting.executeScript({
         target: { tabId: targetTabId },
         func: () => {
-            window.location.href = "/ckg-pendaftaran-individu";
+            window.location.href =
+                "https://sehatindonesiaku.kemkes.go.id/ckg-pendaftaran-individu";
         },
     });
 
@@ -548,7 +549,7 @@ document.getElementById("runBtn").addEventListener("click", async () => {
         );
 
         const find = logsData.find((it) => it.no === iData.no);
-        const eStatus = result?.belumSesuaiKTP
+        let eStatus = result?.belumSesuaiKTP
             ? "Nama dan NIK Beda"
             : result?.sudahDidaftarkan
             ? "Double Data"
@@ -561,8 +562,17 @@ document.getElementById("runBtn").addEventListener("click", async () => {
             : result?.success
             ? "--On Progress--"
             : "";
-        const eKeterangan = result?.message;
+        let eKeterangan = result?.message;
         if (!eStatus) continue;
+        if (eStatus === "--On Progress--") {
+            if (isUnder10Years(iData.tgl_lahir)) {
+                eStatus = "Berhasil Input";
+                eKeterangan = "BAYI";
+            } else if (isOver60Years(iData.tgl_lahir)) {
+                eStatus = "Berhasil Input";
+                eKeterangan = "LANSIA";
+            }
+        }
         if (find) {
             find.status = eStatus;
             find.keterangan = eKeterangan;
@@ -609,7 +619,8 @@ async function runRobotPemeriksaan(aktifData) {
     await chrome.scripting.executeScript({
         target: { tabId: targetTabId },
         func: () => {
-            window.location.href = "/ckg-pelayanan";
+            window.location.href =
+                "https://sehatindonesiaku.kemkes.go.id/ckg-pelayanan";
         },
     });
 
@@ -629,17 +640,17 @@ async function runRobotPemeriksaan(aktifData) {
                                 X_PATH.SELECT_SEARCH_PELAYANAN
                             );
                             clickElement(selectSearch);
-                            const selectSearchNama = await waitForElementAsync(
-                                X_PATH.SELECT_SEARCH_NAMA_PELAYANAN
+                            const selectSearchNik = await waitForElementAsync(
+                                X_PATH.SELECT_SEARCH_NIK_PELAYANAN
                             );
-                            clickElement(selectSearchNama);
+                            clickElement(selectSearchNik);
                             await sleep(750);
 
-                            const inputSearchNama = await waitForElementAsync(
-                                X_PATH.INPUT_SEARCH_PELAYANAN
+                            const inputSearchNik = await waitForElementAsync(
+                                X_PATH.INPUT_SEARCH_NIK_PELAYANAN
                             );
-                            inputElementValue(inputSearchNama, inData.nama);
-                            enterKeyElement(inputSearchNama);
+                            inputElementValue(inputSearchNik, inData.nik);
+                            enterKeyElement(inputSearchNik);
 
                             await sleep(750);
                             const btnMulai = await waitForElementAsync(
