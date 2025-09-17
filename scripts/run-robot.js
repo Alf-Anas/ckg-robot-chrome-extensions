@@ -650,6 +650,7 @@ async function runRobotPemeriksaan(aktifData) {
                                 X_PATH.INPUT_SEARCH_NIK_PELAYANAN
                             );
                             inputElementValue(inputSearchNik, inData.nik);
+                            await sleep(500);
                             enterKeyElement(inputSearchNik);
 
                             await sleep(750);
