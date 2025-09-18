@@ -143,7 +143,7 @@ async function runRobot(aktifData) {
                                         await findYear();
                                     }
                                 }
-
+                                await sleep(350);
                                 await findYear();
                             }
                             await selectBirthYear(inData.tgl_lahir);
