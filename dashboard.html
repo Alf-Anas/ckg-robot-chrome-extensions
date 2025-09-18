@@ -72,6 +72,35 @@
             </table>
         </div>
         <hr />
+
+        <div class="accordion my-2" id="accordionSummary">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSummary">
+                    <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseSummary"
+                        aria-controls="collapseSummary"
+                    >
+                        Ringkasan
+                    </button>
+                </h2>
+                <div
+                    id="collapseSummary"
+                    class="accordion-collapse"
+                    aria-labelledby="headingSummary"
+                    aria-expanded="true"
+                    data-bs-parent="#accordionSummary"
+                >
+                    <div class="accordion-body show">
+                        <div id="summary"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
         <h5 class="text-success">Logs</h5>
         <div
             class="table-responsive"

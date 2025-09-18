@@ -28,6 +28,86 @@ function loadDataTable() {
             });
         }
     }
+    renderSummary();
+}
+
+function summarizeColumn(colName) {
+    const aktifData = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE.AKTIF_DATA) || "[]"
+    );
+    const logsData = JSON.parse(
+        localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+    );
+
+    const theData = aktifData.map((item) => {
+        const find = logsData.find((it) => it.no === item.no);
+        if (find) {
+            return { ...item, ...find };
+        }
+        return item;
+    });
+
+    const counts = {};
+    theData.forEach((row) => {
+        let val = row[colName] || "(Kosong)";
+        counts[val] = (counts[val] || 0) + 1;
+    });
+    const total = theData.length;
+    return Object.entries(counts).map(([val, count]) => ({
+        value: val,
+        count,
+        percent: ((count / total) * 100).toFixed(2) + "%",
+    }));
+}
+
+function renderSummary() {
+    const container = document.getElementById("summary");
+    const cols = [
+        "status",
+        "keterangan",
+        "daftar",
+        "hadir",
+        "pemeriksaan",
+        "rapor",
+    ];
+
+    let rowStart = `<div class="row">`;
+    let content = "";
+
+    cols.forEach((col) => {
+        const summary = summarizeColumn(col);
+        let table = `
+      <div class="col-md-4 mb-4">
+        <b class="mt-2 text-capitalize d-block">${col}</b>
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr>
+              <th>Kategori</th>
+              <th>Jumlah</th>
+              <th>Persen</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${summary
+                .map(
+                    (s) => `
+              <tr>
+                <td>${s.value}</td>
+                <td>${s.count}</td>
+                <td>${s.percent}</td>
+              </tr>
+            `
+                )
+                .join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+        content += table;
+    });
+
+    let rowEnd = `</div>`;
+    container.innerHTML = rowStart + content + rowEnd;
 }
 
 loadDataTable();
