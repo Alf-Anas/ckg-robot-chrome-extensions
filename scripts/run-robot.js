@@ -34,13 +34,13 @@ async function runRobot(aktifData) {
 
                             // CLICK DAFTAR BARU
                             const btnDaftar = await waitForElementAsync(
-                                X_PATH.BTN_DAFTAR_BARU
+                                X_PATH.BTN_DAFTAR_BARU,
                             );
                             clickElement(btnDaftar);
 
                             if (inData.nik) {
                                 const inputNIK = await waitForElementAsync(
-                                    X_PATH.INPUT_NIK
+                                    X_PATH.INPUT_NIK,
                                 );
                                 inputElementValue(inputNIK, inData.nik);
                             } else {
@@ -58,7 +58,7 @@ async function runRobot(aktifData) {
                             }
 
                             const inputNamaLengkap = await waitForElementAsync(
-                                X_PATH.INPUT_NAMA_LENGKAP
+                                X_PATH.INPUT_NAMA_LENGKAP,
                             );
                             inputElementValue(inputNamaLengkap, inData.nama);
 
@@ -67,19 +67,19 @@ async function runRobot(aktifData) {
                                 if (!tglLahir) return;
 
                                 const tglInput = await waitForElementAsync(
-                                    X_PATH.INPUT_TGL_LAHIR
+                                    X_PATH.INPUT_TGL_LAHIR,
                                 );
                                 clickElement(tglInput);
 
                                 const yearBtn = await waitForElementAsync(
-                                    X_PATH.INPUT_TGL_LAHIR_YEAR
+                                    X_PATH.INPUT_TGL_LAHIR_YEAR,
                                 );
                                 clickElement(yearBtn);
 
                                 // Find and click day
                                 async function findDay() {
                                     const dayTable = await waitForElementAsync(
-                                        X_PATH.INPUT_TGL_LAHIR_DAY_TABLE
+                                        X_PATH.INPUT_TGL_LAHIR_DAY_TABLE,
                                     );
                                     const xpath = `.//td[@title="${tglLahir.date}"]`;
                                     const dayEl = document.evaluate(
@@ -87,7 +87,7 @@ async function runRobot(aktifData) {
                                         dayTable,
                                         null,
                                         XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null
+                                        null,
                                     ).singleNodeValue;
                                     if (dayEl) clickElement(dayEl);
                                 }
@@ -96,7 +96,7 @@ async function runRobot(aktifData) {
                                 async function findMonth() {
                                     const monthTable =
                                         await waitForElementAsync(
-                                            X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE
+                                            X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
                                         );
                                     const xpath = `.//td[@data-month="${
                                         tglLahir.month - 1
@@ -106,7 +106,7 @@ async function runRobot(aktifData) {
                                         monthTable,
                                         null,
                                         XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null
+                                        null,
                                     ).singleNodeValue;
                                     if (monthEl) {
                                         clickElement(monthEl);
@@ -118,7 +118,7 @@ async function runRobot(aktifData) {
                                 // Find and click year (recursive if not found)
                                 async function findYear() {
                                     const yearTable = await waitForElementAsync(
-                                        X_PATH.INPUT_TGL_LAHIR_YEAR_TABLE
+                                        X_PATH.INPUT_TGL_LAHIR_YEAR_TABLE,
                                     );
                                     const xpath = `.//td[@data-year="${tglLahir.year}"]`;
                                     const yearEl = document.evaluate(
@@ -126,7 +126,7 @@ async function runRobot(aktifData) {
                                         yearTable,
                                         null,
                                         XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null
+                                        null,
                                     ).singleNodeValue;
 
                                     if (yearEl) {
@@ -136,7 +136,7 @@ async function runRobot(aktifData) {
                                     } else {
                                         const prevBtn =
                                             await waitForElementAsync(
-                                                X_PATH.INPUT_TGL_LAHIR_YEAR_BEFORE
+                                                X_PATH.INPUT_TGL_LAHIR_YEAR_BEFORE,
                                             );
                                         clickElement(prevBtn);
                                         await sleep(350); // small delay before retry
@@ -149,7 +149,7 @@ async function runRobot(aktifData) {
                             await selectBirthYear(inData.tgl_lahir);
 
                             const inputJK = await waitForElementAsync(
-                                X_PATH.INPUT_JENIS_KELAMIN
+                                X_PATH.INPUT_JENIS_KELAMIN,
                             );
                             clickElement(inputJK);
 
@@ -158,52 +158,52 @@ async function runRobot(aktifData) {
                                 "perempuan";
                             if (isPerempuan) {
                                 const selPR = await waitForElementAsync(
-                                    X_PATH.SELECT_JK_PR
+                                    X_PATH.SELECT_JK_PR,
                                 );
                                 clickElement(selPR);
                             } else {
                                 const selLK = await waitForElementAsync(
-                                    X_PATH.SELECT_JK_LK
+                                    X_PATH.SELECT_JK_LK,
                                 );
                                 clickElement(selLK);
                             }
 
                             const inputWA = await waitForElementAsync(
-                                X_PATH.INPUT_WA
+                                X_PATH.INPUT_WA,
                             );
                             inputElementValue(
                                 inputWA,
-                                cleanPhoneNumber(inData.no_hp, defData.no_wa)
+                                cleanPhoneNumber(inData.no_hp, defData.no_wa),
                             );
 
                             // Wait for ALAMAT input, fill it
                             const inputAlamat = await waitForElementAsync(
-                                X_PATH.INPUT_ALAMAT
+                                X_PATH.INPUT_ALAMAT,
                             );
                             inputElementValue(
                                 inputAlamat,
-                                inData.alamat || defData.alamat
+                                inData.alamat || defData.alamat,
                             );
 
                             async function selectPekerjaan() {
                                 const inputPekerjaan =
                                     await waitForElementAsync(
-                                        X_PATH.INPUT_PEKERJAAN
+                                        X_PATH.INPUT_PEKERJAAN,
                                     );
                                 clickElement(inputPekerjaan);
                                 const inputPekerjaanParent =
                                     await waitForElementAsync(
-                                        X_PATH.INPUT_PEKERJAAN_PARENT
+                                        X_PATH.INPUT_PEKERJAAN_PARENT,
                                     );
                                 const xpath = `.//button[.//div[contains(normalize-space(text()), '${getPekerjaanLabel(
-                                    inData.pekerjaan
+                                    inData.pekerjaan,
                                 )}')]]`;
                                 const pekerjaanEl = document.evaluate(
                                     xpath,
                                     inputPekerjaanParent,
                                     null,
                                     XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                    null
+                                    null,
                                 ).singleNodeValue;
                                 if (pekerjaanEl) {
                                     clickElement(pekerjaanEl);
@@ -214,21 +214,21 @@ async function runRobot(aktifData) {
 
                             async function selectAlamatDomisili() {
                                 const inputDomisili = await waitForElementAsync(
-                                    X_PATH.INPUT_ALAMAT_DOMISILI
+                                    X_PATH.INPUT_ALAMAT_DOMISILI,
                                 );
                                 clickElement(inputDomisili);
 
                                 async function getKelDesa() {
                                     const success = await selectWithRetry(
                                         X_PATH.INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT,
-                                        defData.keldesa
+                                        defData.keldesa,
                                     );
                                 }
 
                                 async function getKecamatan() {
                                     const success = await selectWithRetry(
                                         X_PATH.INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT,
-                                        defData.kecamatan
+                                        defData.kecamatan,
                                     );
 
                                     if (success) {
@@ -238,7 +238,7 @@ async function runRobot(aktifData) {
                                 async function getKabKota() {
                                     const success = await selectWithRetry(
                                         X_PATH.INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT,
-                                        defData.kabkota
+                                        defData.kabkota,
                                     );
 
                                     if (success) {
@@ -248,7 +248,7 @@ async function runRobot(aktifData) {
                                 async function getProvinsi() {
                                     const success = await selectWithRetry(
                                         X_PATH.INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT,
-                                        defData.provinsi
+                                        defData.provinsi,
                                     );
 
                                     if (success) {
@@ -263,7 +263,7 @@ async function runRobot(aktifData) {
 
                             async function selectTanggalPemeriksaan() {
                                 const tglParent = await waitForElementAsync(
-                                    X_PATH.INPUT_TGL_PEMERIKSAAN_PARENT
+                                    X_PATH.INPUT_TGL_PEMERIKSAAN_PARENT,
                                 );
                                 const xpath = `.//button[not(contains(@class,'cursor-not-allowed'))]/span[text()='${defData.tanggal_pemeriksaan}']/..`;
 
@@ -272,7 +272,7 @@ async function runRobot(aktifData) {
                                     tglParent,
                                     null,
                                     XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                    null
+                                    null,
                                 ).singleNodeValue;
                                 if (tglEl) {
                                     clickElement(tglEl);
@@ -283,31 +283,31 @@ async function runRobot(aktifData) {
 
                             // CLICK SELANJUTNYA
                             const btnSelanjutnya = await waitForElementAsync(
-                                X_PATH.BTN_SELANJUTNYA
+                                X_PATH.BTN_SELANJUTNYA,
                             );
                             clickElement(btnSelanjutnya);
 
                             // CLICK LANJUT
                             const btnLanjutKuotaHabis =
                                 await waitForElementAsync(
-                                    X_PATH.BTN_LANJUT_KUOTA_HABIS
+                                    X_PATH.BTN_LANJUT_KUOTA_HABIS,
                                 );
                             clickElement(btnLanjutKuotaHabis);
 
                             try {
                                 const msgPopup = await waitForElementAsync(
-                                    X_PATH.MSG_POPUP
+                                    X_PATH.MSG_POPUP,
                                 );
                                 if (msgPopup) {
                                     console.log("MSGPOPUP found", msgPopup);
                                     const text = msgPopup.textContent.trim();
                                     if (
                                         text.includes(
-                                            "Pembatasan Umur Pemeriksaan"
+                                            "Pembatasan Umur Pemeriksaan",
                                         )
                                     ) {
                                         console.log(
-                                            "Message found: Pembatasan Umur Pemeriksaan"
+                                            "Message found: Pembatasan Umur Pemeriksaan",
                                         );
 
                                         return {
@@ -330,20 +330,20 @@ async function runRobot(aktifData) {
                                 // CLICK PILIH
                                 const btnPilihPeserta =
                                     await waitForElementAsync(
-                                        X_PATH.BTN_PILIH_PESERTA
+                                        X_PATH.BTN_PILIH_PESERTA,
                                     );
                                 clickElement(btnPilihPeserta);
 
                                 // CLICK DAFTAR DENGAN NIK
                                 const btnDaftarNIK = await waitForElementAsync(
-                                    X_PATH.BTN_DAFTAR_DENGAN_NIK
+                                    X_PATH.BTN_DAFTAR_DENGAN_NIK,
                                 );
                                 clickElement(btnDaftarNIK);
                             } else {
                                 // CLICK DAFTAR TANPA NIK
                                 const btnDaftarNoNIK =
                                     await waitForElementAsync(
-                                        X_PATH.BTN_DAFTAR_TANPA_NIK
+                                        X_PATH.BTN_DAFTAR_TANPA_NIK,
                                     );
                                 clickElement(btnDaftarNoNIK);
                             }
@@ -351,7 +351,7 @@ async function runRobot(aktifData) {
                             // CLICK CEK POPUP
                             try {
                                 const msgPopup = await waitForElementAsync(
-                                    X_PATH.MSG_POPUP
+                                    X_PATH.MSG_POPUP,
                                 );
                                 if (msgPopup) {
                                     console.log("MSGPOPUP found", msgPopup);
@@ -360,7 +360,7 @@ async function runRobot(aktifData) {
                                         text.includes("Data belum sesuai KTP")
                                     ) {
                                         console.log(
-                                            "Message found: Data belum sesuai KTP"
+                                            "Message found: Data belum sesuai KTP",
                                         );
 
                                         return {
@@ -372,7 +372,7 @@ async function runRobot(aktifData) {
                                         text.includes("Kuota Pemeriksaan Habis")
                                     ) {
                                         console.log(
-                                            "Message found: Kuota Pemeriksaan Habis"
+                                            "Message found: Kuota Pemeriksaan Habis",
                                         );
 
                                         return {
@@ -382,11 +382,11 @@ async function runRobot(aktifData) {
                                         };
                                     } else if (
                                         text.includes(
-                                            "Peserta Menerima Pemeriksaan"
+                                            "Peserta Menerima Pemeriksaan",
                                         )
                                     ) {
                                         console.log(
-                                            "Message found: Peserta Menerima Pemeriksaan"
+                                            "Message found: Peserta Menerima Pemeriksaan",
                                         );
 
                                         return {
@@ -397,11 +397,11 @@ async function runRobot(aktifData) {
                                         };
                                     } else if (
                                         text.includes(
-                                            "Pembatasan Umur Pemeriksaan"
+                                            "Pembatasan Umur Pemeriksaan",
                                         )
                                     ) {
                                         console.log(
-                                            "Message found: Pembatasan Umur Pemeriksaan"
+                                            "Message found: Pembatasan Umur Pemeriksaan",
                                         );
 
                                         return {
@@ -425,7 +425,7 @@ async function runRobot(aktifData) {
                             }
 
                             const msgPopupSuccess = await waitForElementAsync(
-                                X_PATH.MSG_POPUP_SUCCESS
+                                X_PATH.MSG_POPUP_SUCCESS,
                             );
 
                             if (!msgPopupSuccess) {
@@ -449,46 +449,46 @@ async function runRobot(aktifData) {
                             }
 
                             const btnTutupSuccess = await waitForElementAsync(
-                                X_PATH.BTN_TUTUP_SUCCESS_DAFTAR
+                                X_PATH.BTN_TUTUP_SUCCESS_DAFTAR,
                             );
                             clickElement(btnTutupSuccess);
                             await sleep(500);
                             const selectSearch = await waitForElementAsync(
-                                X_PATH.SELECT_SEARCH
+                                X_PATH.SELECT_SEARCH,
                             );
                             clickElement(selectSearch);
                             const selectSearchNama = await waitForElementAsync(
-                                X_PATH.SELECT_SEARCH_NAMA
+                                X_PATH.SELECT_SEARCH_NAMA,
                             );
                             clickElement(selectSearchNama);
                             await sleep(750);
 
                             const inputSearchNama = await waitForElementAsync(
-                                X_PATH.INPUT_SEARCH
+                                X_PATH.INPUT_SEARCH,
                             );
                             inputElementValue(inputSearchNama, inData.nama);
                             enterKeyElement(inputSearchNama);
                             await sleep(750);
                             const btnKonfirmHadir = await waitForElementAsync(
-                                X_PATH.BTN_KONFIMASI_HADIR
+                                X_PATH.BTN_KONFIMASI_HADIR,
                             );
                             clickElement(btnKonfirmHadir);
 
                             const checkboxBersediaCKG =
                                 await waitForElementAsync(
-                                    X_PATH.CHECKBOX_BERSEDIA_CKG
+                                    X_PATH.CHECKBOX_BERSEDIA_CKG,
                                 );
                             clickElement(checkboxBersediaCKG);
                             await sleep(500);
                             const btnHadirOK = await waitForElementAsync(
-                                X_PATH.BTN_HADIR_CKG
+                                X_PATH.BTN_HADIR_CKG,
                             );
                             clickElement(btnHadirOK);
 
                             await sleep(750);
                             const msgPopupSuccessHadir =
                                 await waitForElementAsync(
-                                    X_PATH.MSG_POPUP_BERHASIL_HADIR
+                                    X_PATH.MSG_POPUP_BERHASIL_HADIR,
                                 );
 
                             if (msgPopupSuccessHadir) {
@@ -520,7 +520,7 @@ async function runRobot(aktifData) {
                         } else {
                             resolve(results[0].result); // pass result back to caller
                         }
-                    }
+                    },
                 );
             }
         }
@@ -536,7 +536,7 @@ document.getElementById("runBtn").addEventListener("click", async () => {
     for (let i = 0; i < listData.length; i++) {
         const iData = listData[i];
         showMessage(
-            `Pengisian Data untuk ${iData.no}-${iData.nik}-${iData.nama}`
+            `Pengisian Data untuk ${iData.no}-${iData.nik}-${iData.nama}`,
         );
         console.log("Robot Runnnn...", i);
         const result = await runRobot(iData);
@@ -545,23 +545,23 @@ document.getElementById("runBtn").addEventListener("click", async () => {
         if (result?.kuotaHabis) break;
 
         const logsData = JSON.parse(
-            localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+            localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]",
         );
 
         const find = logsData.find((it) => it.no === iData.no);
         let eStatus = result?.belumSesuaiKTP
             ? "Nama dan NIK Beda"
             : result?.sudahDidaftarkan
-            ? "Double Data"
-            : result?.noNik
-            ? "Lainnya"
-            : result?.pembatasanUmurPemeriksaan
-            ? "Lainnya"
-            : result?.lainnya
-            ? "Lainnya"
-            : result?.success
-            ? "--On Progress--"
-            : "";
+              ? "Double Data"
+              : result?.noNik
+                ? "Lainnya"
+                : result?.pembatasanUmurPemeriksaan
+                  ? "Lainnya"
+                  : result?.lainnya
+                    ? "Lainnya"
+                    : result?.success
+                      ? "--On Progress--"
+                      : "";
         let eKeterangan = result?.message;
         if (!eStatus) continue;
         if (eStatus === "--On Progress--") {
@@ -637,33 +637,35 @@ async function runRobotPemeriksaan(aktifData) {
                             console.log("III", inData, defData);
 
                             const selectSearch = await waitForElementAsync(
-                                X_PATH.SELECT_SEARCH_PELAYANAN
+                                X_PATH.SELECT_SEARCH_PELAYANAN,
                             );
                             clickElement(selectSearch);
                             const selectSearchNik = await waitForElementAsync(
-                                X_PATH.SELECT_SEARCH_NIK_PELAYANAN
+                                X_PATH.SELECT_SEARCH_NIK_PELAYANAN,
                             );
                             clickElement(selectSearchNik);
                             await sleep(750);
 
                             const inputSearchNik = await waitForElementAsync(
-                                X_PATH.INPUT_SEARCH_NIK_PELAYANAN
+                                X_PATH.INPUT_SEARCH_NIK_PELAYANAN,
                             );
-                            inputElementValue(inputSearchNik, inData.nik);
+                            forceInput(inputSearchNik, String(inData.nik));
                             await sleep(500);
                             enterKeyElement(inputSearchNik);
 
-                            await sleep(750);
+                            await sleepUntilLoaded();
+                            // await sleep(750);
                             const btnMulai = await waitForElementAsync(
-                                X_PATH.BTN_MULAI_PELAYANAN
+                                X_PATH.BTN_MULAI_PELAYANAN,
                             );
                             clickElement(btnMulai);
 
-                            await sleep(500);
+                            // await sleep(500);
+                            await sleepUntilLoaded();
                             try {
                                 const btnMulaiPemeriksaan =
                                     await waitForElementAsync(
-                                        X_PATH.BTN_MULAI_PEMERIKSAAN
+                                        X_PATH.BTN_MULAI_PEMERIKSAAN,
                                     );
                                 clickElement(btnMulaiPemeriksaan);
                             } catch (err) {
@@ -672,7 +674,7 @@ async function runRobotPemeriksaan(aktifData) {
 
                             await sleep(750);
                             const btnInputGizi = await waitForElementAsync(
-                                X_PATH.BTN_INPUT_GIZI
+                                X_PATH.BTN_INPUT_GIZI,
                             );
                             chrome.runtime.sendMessage({
                                 inputGiziPage: true,
@@ -688,7 +690,7 @@ async function runRobotPemeriksaan(aktifData) {
                         } else {
                             resolve(results[0].result); // pass result back to caller
                         }
-                    }
+                    },
                 );
             }
         }
@@ -706,10 +708,10 @@ async function runInputGiziPageScript(inData, defData) {
         const inputLP = await waitForElementAsync(X_PATH.INPUT_GIZI_LP);
         inputElementValue(
             inputLP,
-            inData.lingkar_perut || defData.lingkar_perut
+            inData.lingkar_perut || defData.lingkar_perut,
         );
         const btnInputGiziKirim = await waitForElementAsync(
-            X_PATH.BTN_INPUT_DATA_KIRIM
+            X_PATH.BTN_INPUT_DATA_KIRIM,
         );
         chrome.runtime.sendMessage({
             inputDarah: true,
@@ -723,8 +725,9 @@ async function runInputGiziPageScript(inData, defData) {
 async function runInputDarahScript(inData, defData) {
     (async () => {
         console.log("INPUT DARAH", inData, defData);
+        await sleepUntilLoaded(1000);
         const btnInputDarah = await waitForElementAsync(
-            X_PATH.BTN_INPUT_TEKANAN_DARAH
+            X_PATH.BTN_INPUT_TEKANAN_DARAH,
         );
         chrome.runtime.sendMessage({
             inputDarahPage: true,
@@ -739,18 +742,23 @@ async function runInputDarahPageScript(inData, defData) {
     (async () => {
         console.log("INPUT DARAH PAGE", inData, defData);
         const inputSistolik = await waitForElementAsync(
-            X_PATH.INPUT_DARAH_SISTOLIK
+            X_PATH.INPUT_DARAH_SISTOLIK,
         );
         inputElementValue(inputSistolik, inData.td_sistol || defData.td_sistol);
         const inputDiastolik = await waitForElementAsync(
-            X_PATH.INPUT_DARAH_DIASTOLIK
+            X_PATH.INPUT_DARAH_DIASTOLIK,
         );
         inputElementValue(
             inputDiastolik,
-            inData.td_diastol || defData.td_diastol
+            inData.td_diastol || defData.td_diastol,
         );
+        if (inData?.darah_tinggi == "Ya") {
+            clickRadioByText("Ya");
+        } else {
+            clickRadioByText("Tidak");
+        }
         const btnInputDataKirim = await waitForElementAsync(
-            X_PATH.BTN_INPUT_DATA_KIRIM
+            X_PATH.BTN_INPUT_DATA_KIRIM,
         );
         chrome.runtime.sendMessage({
             inputGula: true,
@@ -764,8 +772,9 @@ async function runInputDarahPageScript(inData, defData) {
 async function runInputGulaScript(inData, defData) {
     (async () => {
         console.log("INPUT GULA", inData, defData);
+        await sleepUntilLoaded(1000);
         const btnInputGula = await waitForElementAsync(
-            X_PATH.BTN_INPUT_GULA_DARAH
+            X_PATH.BTN_INPUT_GULA_DARAH,
         );
         chrome.runtime.sendMessage({
             inputGulaPage: true,
@@ -782,10 +791,16 @@ async function runInputGulaPageScript(inData, defData) {
         const inputGDS = await waitForElementAsync(X_PATH.INPUT_GDS);
         inputElementValue(
             inputGDS,
-            inData.pemeriksaan_gula || defData.pemeriksaan_gula
+            inData.pemeriksaan_gula || defData.pemeriksaan_gula,
         );
+
+        if (inData?.diabetes == "Ya") {
+            clickRadioByText("Ya");
+        } else {
+            clickRadioByText("Tidak");
+        }
         const btnInputDataKirim = await waitForElementAsync(
-            X_PATH.BTN_INPUT_DATA_KIRIM
+            X_PATH.BTN_INPUT_DATA_KIRIM,
         );
         chrome.runtime.sendMessage({
             inputKirimRapor: true,
@@ -800,18 +815,20 @@ async function runInputKirimRaporScript(inData, defData) {
     (async () => {
         try {
             console.log("KIRIM RAPOR", inData, defData);
+            await sleepUntilLoaded(1000);
             const btnKirimRaport = await waitForElementAsync(
-                X_PATH.BTN_KIRIM_RAPOR
+                X_PATH.BTN_KIRIM_RAPOR,
             );
 
             clickElement(btnKirimRaport);
 
             await sleep(750);
             const btnKirimRaportOK = await waitForElementAsync(
-                X_PATH.BTN_KIRIM_RAPOR_OK
+                X_PATH.BTN_KIRIM_RAPOR_OK,
             );
             clickElement(btnKirimRaportOK);
             console.log("btnKirimRaportOK", btnKirimRaportOK);
+            await sleepUntilLoaded(1000);
 
             chrome.runtime.sendMessage({
                 finished: true,
@@ -835,7 +852,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender) => {
         console.log("Run Input Gizi");
         function listener(tabId, changeInfo, tab) {
             if (tabId === targetTabId && changeInfo.status === "complete") {
-                if (tab.url.includes("form.kemkes.go.id/survey-form")) {
+                if (tab.url.includes("form.kemkes.go.id/v2/skrining-form")) {
                     chrome.tabs.onUpdated.removeListener(listener);
 
                     chrome.scripting.executeScript({
@@ -853,7 +870,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender) => {
             if (tabId === targetTabId && changeInfo.status === "complete") {
                 if (
                     tab.url.includes(
-                        "sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan"
+                        "sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan",
                     )
                 ) {
                     chrome.tabs.onUpdated.removeListener(listener);
@@ -871,7 +888,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender) => {
         console.log("Run Input Darah Page");
         function listener(tabId, changeInfo, tab) {
             if (tabId === targetTabId && changeInfo.status === "complete") {
-                if (tab.url.includes("form.kemkes.go.id/survey-form")) {
+                if (tab.url.includes("form.kemkes.go.id/v2/skrining-form")) {
                     chrome.tabs.onUpdated.removeListener(listener);
 
                     chrome.scripting.executeScript({
@@ -889,7 +906,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender) => {
             if (tabId === targetTabId && changeInfo.status === "complete") {
                 if (
                     tab.url.includes(
-                        "sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan"
+                        "sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan",
                     )
                 ) {
                     chrome.tabs.onUpdated.removeListener(listener);
@@ -907,7 +924,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender) => {
         console.log("Run Input Gula Page");
         function listener(tabId, changeInfo, tab) {
             if (tabId === targetTabId && changeInfo.status === "complete") {
-                if (tab.url.includes("form.kemkes.go.id/survey-form")) {
+                if (tab.url.includes("form.kemkes.go.id/v2/skrining-form")) {
                     chrome.tabs.onUpdated.removeListener(listener);
 
                     chrome.scripting.executeScript({
@@ -926,7 +943,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender) => {
             if (tabId === targetTabId && changeInfo.status === "complete") {
                 if (
                     tab.url.includes(
-                        "sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan"
+                        "sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan",
                     )
                 ) {
                     chrome.tabs.onUpdated.removeListener(listener);
@@ -974,14 +991,14 @@ document.getElementById("runPelayanan").addEventListener("click", async () => {
                 );
             },
             3000,
-            300000
+            300000,
         );
         if (
             PemeriksaanStatus.finished &&
             PemeriksaanStatus.data.no === iData.no
         ) {
             const logsData = JSON.parse(
-                localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]"
+                localStorage.getItem(LOCAL_STORAGE.LOGS) || "[]",
             );
 
             const find = logsData.find((it) => it.no === iData.no);
@@ -994,8 +1011,8 @@ document.getElementById("runPelayanan").addEventListener("click", async () => {
                 PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Kirim Rapor"
                     : PemeriksaanStatus.pemeriksaan === "Sudah"
-                    ? "Selesai Pemeriksaan"
-                    : "";
+                      ? "Selesai Pemeriksaan"
+                      : "";
 
             if (find) {
                 find.status = eStatus || find.status;
@@ -1004,7 +1021,7 @@ document.getElementById("runPelayanan").addEventListener("click", async () => {
                 find.rapor = PemeriksaanStatus.rapor;
                 localStorage.setItem(
                     LOCAL_STORAGE.LOGS,
-                    JSON.stringify(logsData)
+                    JSON.stringify(logsData),
                 );
                 loadDataTable();
             }

@@ -8,7 +8,7 @@ function waitForElement(xpath, callback, parentEl, maxTries = 10) {
             parentEl || document,
             null,
             XPathResult.FIRST_ORDERED_NODE_TYPE,
-            null
+            null,
         ).singleNodeValue;
 
         if (element) {
@@ -34,7 +34,7 @@ function clickElement(el) {
                 view: window,
                 bubbles: true,
                 cancelable: true,
-            })
+            }),
         );
     }
 }
@@ -44,6 +44,35 @@ function inputElementValue(el, val) {
         el.dispatchEvent(new Event("input", { bubbles: true }));
     }
 }
+
+const forceInput = (el, val) => {
+    const setter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value",
+    ).set;
+    setter.call(el, String(val));
+
+    ["input", "change", "blur", "keyup"].forEach((e) =>
+        el.dispatchEvent(new Event(e, { bubbles: true })),
+    );
+};
+
+const typeInto = async (el, text, delay = 60) => {
+    text = String(text);
+    el.focus();
+    el.value = "";
+    for (const ch of text) {
+        document.execCommand("insertText", false, ch);
+        await new Promise((r) => setTimeout(r, delay));
+    }
+};
+
+const clickRadioByText = (text) => {
+    [...document.querySelectorAll("label")]
+        .find((l) => l.innerText.trim() === text)
+        ?.click();
+};
+
 function enterKeyElement(el) {
     if (el) {
         el.dispatchEvent(
@@ -54,7 +83,7 @@ function enterKeyElement(el) {
                 which: 13, // for older browsers
                 bubbles: true,
                 cancelable: true,
-            })
+            }),
         );
         el.dispatchEvent(
             new KeyboardEvent("keyup", {
@@ -64,13 +93,23 @@ function enterKeyElement(el) {
                 which: 13,
                 bubbles: true,
                 cancelable: true,
-            })
+            }),
         );
     }
 }
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+}
+async function sleepUntilLoaded(ms = 500, text = "Memuat data", maxRetry = 20) {
+    for (let i = 0; i < maxRetry; i++) {
+        await new Promise((r) => setTimeout(r, ms));
+        if (!document.body.textContent.toLowerCase().includes(text.toLowerCase())) {
+            await new Promise((r) => setTimeout(r, ms)); // safety wait
+            if (!document.body.textContent.toLowerCase().includes(text.toLowerCase())) return true;
+        }
+    }
+    throw new Error(`Timeout: "${text}" still exists`);
 }
 
 // Helper: wait for element returns Promise
@@ -82,11 +121,11 @@ function waitForElementAsync(xpathOrSelector, parentEl, timeout = 5000) {
                 if (el) resolve(el);
                 else reject(`Element not found: ${xpathOrSelector}`);
             },
-            parentEl
+            parentEl,
         );
         setTimeout(
             () => reject(`Timeout waiting for: ${xpathOrSelector}`),
-            timeout
+            timeout,
         );
     });
 }
@@ -399,7 +438,7 @@ async function selectWithRetry(
     parentXPath,
     childText,
     maxRetries = 5,
-    delay = 500
+    delay = 500,
 ) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
@@ -409,7 +448,7 @@ async function selectWithRetry(
 
             if (!parentEl) {
                 console.warn(
-                    `Parent not found (attempt ${attempt}/${maxRetries})`
+                    `Parent not found (attempt ${attempt}/${maxRetries})`,
                 );
                 continue;
             }
@@ -423,7 +462,7 @@ async function selectWithRetry(
                 return true; // ✅ success
             } else {
                 console.warn(
-                    `Child not found (attempt ${attempt}/${maxRetries})`
+                    `Child not found (attempt ${attempt}/${maxRetries})`,
                 );
             }
         } catch (err) {
@@ -454,7 +493,7 @@ function waitForPageLoad(timeout = 20000) {
 async function waitForCondition(
     conditionFn,
     interval = 5000,
-    timeout = 300000
+    timeout = 300000,
 ) {
     const start = Date.now();
 
@@ -503,7 +542,7 @@ const X_PATH = {
     INPUT_TGL_LAHIR_MONTH_TABLE: "/html/body/div[3]/div/div/div[2]/table",
     INPUT_TGL_LAHIR_DAY_TABLE: "/html/body/div[3]/div/div/div[2]/table",
     INPUT_PEKERJAAN:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[7]/div/div/div[2]/div[2]",
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[7]/div/div/div[2]/div/div[1]",
     INPUT_PEKERJAAN_PARENT: "/html/body/div[3]/div[2]/div[2]/div",
     INPUT_ALAMAT_DOMISILI:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[8]/div/div[2]/div",
@@ -559,30 +598,30 @@ const X_PATH = {
     SELECT_SEARCH_NAMA_PELAYANAN:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[2]/div[2]/div[1]/div/div[3]/div/div[3]",
     SELECT_SEARCH_NIK_PELAYANAN:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[2]/div[2]/div[1]/div/div[3]/div/div[2]",
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[2]/div[2]/div[1]/div/div[3]/div/div[3]",
     INPUT_SEARCH_PELAYANAN:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[2]/div[2]/div[2]/label/div/input",
     INPUT_SEARCH_NIK_PELAYANAN:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[2]/div[2]/div[2]/label/label/input",
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[2]/div/div[2]/label/div/input",
     BTN_MULAI_PELAYANAN:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[3]/div/table/tbody/tr/td[8]/div/div/button",
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[3]/div/table/tbody/tr/td[9]/div/div/button",
     BTN_MULAI_PEMERIKSAAN: ".//button[normalize-space(.)='Mulai Pemeriksaan']",
 
     BTN_INPUT_GIZI:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[2]/div[2]/div/div/div/div[1]/div[4]/div/button",
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[3]/div/div/div/div[1]/div[4]/div/button",
     INPUT_GIZI_BB: "//input[@id='sq_100i']",
     INPUT_GIZI_TB: "//input[@id='sq_101i']",
     INPUT_GIZI_LP: "//input[@id='sq_102i']",
     BTN_INPUT_DATA_KIRIM: "//input[@type='button' and @value='Kirim']",
 
-    BTN_INPUT_TEKANAN_DARAH: `/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[2]/div[2]/div/div/div/div[2]/div[4]/div/button`,
-    INPUT_DARAH_SISTOLIK: "//input[@id='sq_100i']",
-    INPUT_DARAH_DIASTOLIK: "//input[@id='sq_101i']",
+    BTN_INPUT_TEKANAN_DARAH: `/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[3]/div/div/div/div[3]/div[4]/div/button`,
+    INPUT_DARAH_SISTOLIK: "//input[@id='sq_102i']",
+    INPUT_DARAH_DIASTOLIK: "//input[@id='sq_103i']",
 
     BTN_INPUT_GULA_DARAH:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[2]/div[2]/div/div/div/div[3]/div[4]/div/button",
-    INPUT_GDS: "//input[@id='sq_100i']",
-    INPUT_GDP: "//input[@id='sq_101i']",
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[3]/div/div/div/div[2]/div[4]/div/button",
+    INPUT_GDS: "//input[@id='sq_102i']",
+    INPUT_GDP: "//input[@id='sq_104i']",
     BTN_KIRIM_RAPOR: `/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[1]/div[2]/div[1]/div`,
     BTN_KIRIM_RAPOR_OK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div[2]/div[2]/div/div[4]/div[2]/button",
