@@ -104,9 +104,18 @@ function sleep(ms) {
 async function sleepUntilLoaded(ms = 500, text = "Memuat data", maxRetry = 20) {
     for (let i = 0; i < maxRetry; i++) {
         await new Promise((r) => setTimeout(r, ms));
-        if (!document.body.textContent.toLowerCase().includes(text.toLowerCase())) {
+        if (
+            !document.body.textContent
+                .toLowerCase()
+                .includes(text.toLowerCase())
+        ) {
             await new Promise((r) => setTimeout(r, ms)); // safety wait
-            if (!document.body.textContent.toLowerCase().includes(text.toLowerCase())) return true;
+            if (
+                !document.body.textContent
+                    .toLowerCase()
+                    .includes(text.toLowerCase())
+            )
+                return true;
         }
     }
     throw new Error(`Timeout: "${text}" still exists`);
@@ -172,6 +181,37 @@ function parseDateString(dateStr) {
     const monthStr = String(month).padStart(2, "0");
 
     return { day, month, year, date: `${year}-${monthStr}-${dayStr}` };
+}
+
+function parseDDMMYYYY(dateStr) {
+    const [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day); // JS months = 0-11
+}
+
+function isUnder10Years(dateStr) {
+    const birthDate = parseDDMMYYYY(dateStr);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--; // adjust if birthday hasn’t passed yet this year
+    }
+
+    return age < 10;
+}
+
+function isOver60Years(dateStr) {
+    const birthDate = parseDDMMYYYY(dateStr);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+
+    return age >= 60;
 }
 
 function getPekerjaanLabel(pekerjaan) {
@@ -590,6 +630,11 @@ const X_PATH = {
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[4]/div[2]/div/div[5]/div[2]/button",
     MSG_POPUP_BERHASIL_HADIR:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[4]/div[2]/div/div[1]/div[1]",
+
+    CHECKBOX_TANPA_WALI:
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[4]/div/div[1]/div/div[1]/div",
+    BTN_DAFTAR_TANPA_WALI:
+        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[5]/div[2]/button",
 
     // PEMERIKSAAN
 

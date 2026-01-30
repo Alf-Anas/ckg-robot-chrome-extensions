@@ -192,34 +192,3 @@ function isValidNIK(nik) {
     // Check length = 16 and only digits
     return /^\d{16}$/.test(nik);
 }
-
-function parseDDMMYYYY(dateStr) {
-    const [day, month, year] = dateStr.split("-").map(Number);
-    return new Date(year, month - 1, day); // JS months = 0-11
-}
-
-function isUnder10Years(dateStr) {
-    const birthDate = parseDDMMYYYY(dateStr);
-    const today = new Date();
-
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--; // adjust if birthday hasn’t passed yet this year
-    }
-
-    return age < 10;
-}
-
-function isOver60Years(dateStr) {
-    const birthDate = parseDDMMYYYY(dateStr);
-    const today = new Date();
-
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-    }
-
-    return age >= 60;
-}

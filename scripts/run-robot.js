@@ -316,6 +316,20 @@ async function runRobot(aktifData) {
                                                 "Pembatasan Umur Pemeriksaan",
                                             pembatasanUmurPemeriksaan: true,
                                         };
+                                    } else if (
+                                        text.includes(
+                                            "Individu sudah terdaftar",
+                                        )
+                                    ) {
+                                        console.log(
+                                            "Message found: Individu sudah terdaftar",
+                                        );
+
+                                        return {
+                                            success: false,
+                                            message: "Individu sudah terdaftar",
+                                            sudahDidaftarkan: true,
+                                        };
                                     } else {
                                         return {
                                             success: false,
@@ -346,6 +360,21 @@ async function runRobot(aktifData) {
                                         X_PATH.BTN_DAFTAR_TANPA_NIK,
                                     );
                                 clickElement(btnDaftarNoNIK);
+                            }
+
+                            if (isOver60Years(inData.tgl_lahir)) {
+                                await sleep(500);
+                                const checkboxTanpaWali =
+                                    await waitForElementAsync(
+                                        X_PATH.CHECKBOX_TANPA_WALI,
+                                    );
+                                clickElement(checkboxTanpaWali);
+                                await sleep(500);
+                                const btnDaftarTanpaWali =
+                                    await waitForElementAsync(
+                                        X_PATH.BTN_DAFTAR_TANPA_WALI,
+                                    );
+                                clickElement(btnDaftarTanpaWali);
                             }
 
                             // CLICK CEK POPUP
@@ -515,7 +544,11 @@ async function runRobot(aktifData) {
                         },
                     },
                     (results) => {
+                        console.log("results");
+                        console.log(results);
                         if (chrome.runtime.lastError) {
+                            console.log("[ERROR]");
+                            console.log(chrome.runtime.lastError);
                             reject(chrome.runtime.lastError);
                         } else {
                             resolve(results[0].result); // pass result back to caller
@@ -569,7 +602,7 @@ document.getElementById("runBtn").addEventListener("click", async () => {
                 eStatus = "Berhasil Input";
                 eKeterangan = "BAYI";
             } else if (isOver60Years(iData.tgl_lahir)) {
-                eStatus = "Berhasil Input";
+                // eStatus = "Berhasil Input";
                 eKeterangan = "LANSIA";
             }
         }
