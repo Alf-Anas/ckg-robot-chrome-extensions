@@ -98,9 +98,8 @@ async function runRobot(aktifData) {
                                         await waitForElementAsync(
                                             X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
                                         );
-                                    const xpath = `.//td[@data-month="${
-                                        tglLahir.month - 1
-                                    }"]`;
+                                    const xpath = `.//td[@data-month="${tglLahir.month - 1
+                                        }"]`;
                                     const monthEl = document.evaluate(
                                         xpath,
                                         monthTable,
@@ -338,7 +337,7 @@ async function runRobot(aktifData) {
                                         };
                                     }
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
 
                             if (inData.nik) {
                                 // CLICK PILIH
@@ -585,16 +584,16 @@ document.getElementById("runBtn").addEventListener("click", async () => {
         let eStatus = result?.belumSesuaiKTP
             ? "Nama dan NIK Beda"
             : result?.sudahDidaftarkan
-              ? "Double Data"
-              : result?.noNik
-                ? "Lainnya"
-                : result?.pembatasanUmurPemeriksaan
-                  ? "Lainnya"
-                  : result?.lainnya
+                ? "Double Data"
+                : result?.noNik
                     ? "Lainnya"
-                    : result?.success
-                      ? "--On Progress--"
-                      : "";
+                    : result?.pembatasanUmurPemeriksaan
+                        ? "Lainnya"
+                        : result?.lainnya
+                            ? "Lainnya"
+                            : result?.success
+                                ? "--On Progress--"
+                                : "";
         let eKeterangan = result?.message;
         if (!eStatus) continue;
         if (eStatus === "--On Progress--") {
@@ -1037,15 +1036,15 @@ document.getElementById("runPelayanan").addEventListener("click", async () => {
             const find = logsData.find((it) => it.no === iData.no);
             const eStatus =
                 PemeriksaanStatus.pemeriksaan === "Sudah" &&
-                PemeriksaanStatus.rapor === "Sudah"
+                    PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Input"
                     : "";
             const eKeterangan =
                 PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Kirim Rapor"
                     : PemeriksaanStatus.pemeriksaan === "Sudah"
-                      ? "Selesai Pemeriksaan"
-                      : "";
+                        ? "Selesai Pemeriksaan"
+                        : "";
 
             if (find) {
                 find.status = eStatus || find.status;

@@ -576,24 +576,38 @@ const X_PATH = {
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[9]/div/label/textarea",
     INPUT_TGL_LAHIR:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[4]/div/div[2]/div/div",
-    INPUT_TGL_LAHIR_YEAR: "/html/body/div[3]/div/div/div[1]/span/button[2]",
-    INPUT_TGL_LAHIR_YEAR_TABLE: "/html/body/div[3]/div/div/div[2]/table",
-    INPUT_TGL_LAHIR_YEAR_BEFORE: "/html/body/div[3]/div/div/div[1]/button[1]",
-    INPUT_TGL_LAHIR_MONTH_TABLE: "/html/body/div[3]/div/div/div[2]/table",
-    INPUT_TGL_LAHIR_DAY_TABLE: "/html/body/div[3]/div/div/div[2]/table",
+    INPUT_TGL_LAHIR_YEAR: "//button[contains(@class,'mx-btn-current-year')]",
+    // INPUT_TGL_LAHIR_YEAR: "/html/body/div[3]/div/div/div[1]/span/button[2]",
+    INPUT_TGL_LAHIR_YEAR_TABLE: "//table[contains(@class,'mx-table-year')]",
+    // INPUT_TGL_LAHIR_YEAR_TABLE: "/html/body/div[3]/div/div/div[2]/table",
+    INPUT_TGL_LAHIR_YEAR_BEFORE: "//button[contains(@class,'mx-btn-icon-double-left')]",
+    // INPUT_TGL_LAHIR_YEAR_BEFORE: "/html/body/div[3]/div/div/div[1]/button[1]",
+    INPUT_TGL_LAHIR_MONTH_TABLE: "//table[contains(@class,'mx-table-month')]",
+    // INPUT_TGL_LAHIR_MONTH_TABLE: "/html/body/div[3]/div/div/div[2]/table",
+    INPUT_TGL_LAHIR_DAY_TABLE: "//table[contains(@class,'mx-table-date')]",
+    // INPUT_TGL_LAHIR_DAY_TABLE: "/html/body/div[3]/div/div/div[2]/table",
     INPUT_PEKERJAAN:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[7]/div/div/div[2]/div/div[1]",
-    INPUT_PEKERJAAN_PARENT: "/html/body/div[3]/div[2]/div[2]/div",
+    INPUT_PEKERJAAN_PARENT: "//div[contains(@class,'modal-content')][.//div[text()='Pilih Pekerjaan']]",
+    // INPUT_PEKERJAAN_PARENT: "/html/body/div[3]/div[2]/div[2]/div",
     INPUT_ALAMAT_DOMISILI:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[8]/div/div[2]/div",
     INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT:
-        "/html/body/div[3]/div[2]/div[4]/div",
+        "//div[text()='Daftar Provinsi']/parent::div",
+    // INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT:
+    //     "/html/body/div[3]/div[2]/div[4]/div",
     INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT:
-        "/html/body/div[3]/div[2]/div[4]/div",
+        "//div[text()='Daftar Kabupaten/Kota']/parent::div",
+    // INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT:
+    //     "/html/body/div[3]/div[2]/div[4]/div",
     INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT:
-        "/html/body/div[3]/div[2]/div[4]/div",
+        "//div[text()='Daftar Kecamatan']/parent::div",
+    // INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT:
+    //     "/html/body/div[3]/div[2]/div[4]/div",
     INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT:
-        "/html/body/div[3]/div[2]/div[4]/div",
+        "//div[text()='Daftar Kelurahan']/parent::div",
+    // INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT:
+    //     "/html/body/div[3]/div[2]/div[4]/div",
     INPUT_TGL_PEMERIKSAAN_PARENT:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[2]/div[2]/div/div[2]/div[2]",
     BTN_SELANJUTNYA:
