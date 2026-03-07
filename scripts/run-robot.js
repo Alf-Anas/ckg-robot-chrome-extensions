@@ -355,22 +355,6 @@ async function runRobot(aktifData) {
                                     X_PATH.BTN_DAFTAR_DENGAN_NIK,
                                 );
                                 clickElement(btnDaftarNIK);
-
-                                try {
-                                    const msgPopupKesalahan =
-                                        await waitForElementAsync(
-                                            X_PATH.MSG_POPUP_TERJADI_KESALAHAN,
-                                        );
-                                    if (msgPopupKesalahan) {
-                                        const text =
-                                            msgPopupKesalahan.textContent.trim();
-                                        return {
-                                            success: false,
-                                            message: text,
-                                            lainnya: true,
-                                        };
-                                    }
-                                } catch (err) {}
                             } else {
                                 // CLICK DAFTAR TANPA NIK
                                 const btnDaftarNoNIK =
@@ -394,6 +378,22 @@ async function runRobot(aktifData) {
                                     );
                                 clickElement(btnDaftarTanpaWali);
                             }
+
+                            try {
+                                const msgPopupKesalahan =
+                                    await waitForElementAsync(
+                                        X_PATH.MSG_POPUP_TERJADI_KESALAHAN,
+                                    );
+                                if (msgPopupKesalahan) {
+                                    const text =
+                                        msgPopupKesalahan.textContent.trim();
+                                    return {
+                                        success: false,
+                                        message: text,
+                                        lainnya: true,
+                                    };
+                                }
+                            } catch (err) {}
 
                             // CLICK CEK POPUP
                             try {
