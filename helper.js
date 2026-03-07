@@ -626,7 +626,7 @@ const X_PATH = {
     //     "//button[.//div[text()='Daftarkan dengan NIK']]",
     BTN_DAFTAR_DENGAN_NIK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[5]/div[2]/div[1]/button",
-    MSG_POPUP_TERJADI_KESALAHAN: "//span[contains(text(), 'ada kesalahan')]",
+    MSG_POPUP_TERJADI_KESALAHAN: "//span[contains(., 'Terjadi kesalahan')]/ancestor::div[contains(@class,'p-2')]//div[contains(@class,'my-4')]//span",
     MSG_POPUP:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[6]/div[2]/div/div[1]/div",
     MSG_POPUP_SUCCESS:
