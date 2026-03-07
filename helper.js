@@ -141,6 +141,7 @@ function waitForElementAsync(xpathOrSelector, parentEl, timeout = 5000) {
 
 function cleanPhoneNumber(phone, defPhone = "8000000") {
     if (!phone) return defPhone;
+    phone = String(phone);
 
     // Remove all non-digit characters
     phone = phone.replace(/\D/g, "");
