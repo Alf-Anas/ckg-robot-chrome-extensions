@@ -98,8 +98,9 @@ async function runRobot(aktifData) {
                                         await waitForElementAsync(
                                             X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
                                         );
-                                    const xpath = `.//td[@data-month="${tglLahir.month - 1
-                                        }"]`;
+                                    const xpath = `.//td[@data-month="${
+                                        tglLahir.month - 1
+                                    }"]`;
                                     const monthEl = document.evaluate(
                                         xpath,
                                         monthTable,
@@ -286,12 +287,14 @@ async function runRobot(aktifData) {
                             );
                             clickElement(btnSelanjutnya);
 
-                            // CLICK LANJUT
-                            const btnLanjutKuotaHabis =
-                                await waitForElementAsync(
-                                    X_PATH.BTN_LANJUT_KUOTA_HABIS,
-                                );
-                            clickElement(btnLanjutKuotaHabis);
+                            try {
+                                // CLICK LANJUT kuota habis if exist
+                                const btnLanjutKuotaHabis =
+                                    await waitForElementAsync(
+                                        X_PATH.BTN_LANJUT_KUOTA_HABIS,
+                                    );
+                                clickElement(btnLanjutKuotaHabis);
+                            } catch (err) {}
 
                             try {
                                 const msgPopup = await waitForElementAsync(
@@ -337,7 +340,7 @@ async function runRobot(aktifData) {
                                         };
                                     }
                                 }
-                            } catch (err) { }
+                            } catch (err) {}
 
                             if (inData.nik) {
                                 // CLICK PILIH
@@ -352,6 +355,22 @@ async function runRobot(aktifData) {
                                     X_PATH.BTN_DAFTAR_DENGAN_NIK,
                                 );
                                 clickElement(btnDaftarNIK);
+
+                                try {
+                                    const msgPopupKesalahan =
+                                        await waitForElementAsync(
+                                            X_PATH.MSG_POPUP_TERJADI_KESALAHAN,
+                                        );
+                                    if (msgPopupKesalahan) {
+                                        const text =
+                                            msgPopupKesalahan.textContent.trim();
+                                        return {
+                                            success: false,
+                                            message: text,
+                                            lainnya: true,
+                                        };
+                                    }
+                                } catch (err) {}
                             } else {
                                 // CLICK DAFTAR TANPA NIK
                                 const btnDaftarNoNIK =
@@ -584,16 +603,16 @@ document.getElementById("runBtn").addEventListener("click", async () => {
         let eStatus = result?.belumSesuaiKTP
             ? "Nama dan NIK Beda"
             : result?.sudahDidaftarkan
-                ? "Double Data"
-                : result?.noNik
+              ? "Double Data"
+              : result?.noNik
+                ? "Lainnya"
+                : result?.pembatasanUmurPemeriksaan
+                  ? "Lainnya"
+                  : result?.lainnya
                     ? "Lainnya"
-                    : result?.pembatasanUmurPemeriksaan
-                        ? "Lainnya"
-                        : result?.lainnya
-                            ? "Lainnya"
-                            : result?.success
-                                ? "--On Progress--"
-                                : "";
+                    : result?.success
+                      ? "--On Progress--"
+                      : "";
         let eKeterangan = result?.message;
         if (!eStatus) continue;
         if (eStatus === "--On Progress--") {
@@ -1036,15 +1055,15 @@ document.getElementById("runPelayanan").addEventListener("click", async () => {
             const find = logsData.find((it) => it.no === iData.no);
             const eStatus =
                 PemeriksaanStatus.pemeriksaan === "Sudah" &&
-                    PemeriksaanStatus.rapor === "Sudah"
+                PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Input"
                     : "";
             const eKeterangan =
                 PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Kirim Rapor"
                     : PemeriksaanStatus.pemeriksaan === "Sudah"
-                        ? "Selesai Pemeriksaan"
-                        : "";
+                      ? "Selesai Pemeriksaan"
+                      : "";
 
             if (find) {
                 find.status = eStatus || find.status;

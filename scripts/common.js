@@ -164,6 +164,20 @@ function showMessage(message) {
 function toDDMMYYYY(dateStr) {
     if (!dateStr) return null;
 
+    // Detect Excel serial date (number or numeric string)
+    if (!isNaN(dateStr) && Number(dateStr) > 20000) {
+        const serial = Number(dateStr);
+        // Excel epoch
+        const excelEpoch = Date.UTC(1899, 11, 30);
+
+        const date = new Date(excelEpoch + serial * 86400000);
+        const day = String(date.getUTCDate()).padStart(2, "0");
+        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const year = date.getUTCFullYear();
+
+        return `${day}-${month}-${year}`;
+    }
+
     // Normalize separator
     let parts = dateStr.split(/[-/]/);
 

@@ -581,7 +581,8 @@ const X_PATH = {
     // INPUT_TGL_LAHIR_YEAR: "/html/body/div[3]/div/div/div[1]/span/button[2]",
     INPUT_TGL_LAHIR_YEAR_TABLE: "//table[contains(@class,'mx-table-year')]",
     // INPUT_TGL_LAHIR_YEAR_TABLE: "/html/body/div[3]/div/div/div[2]/table",
-    INPUT_TGL_LAHIR_YEAR_BEFORE: "//button[contains(@class,'mx-btn-icon-double-left')]",
+    INPUT_TGL_LAHIR_YEAR_BEFORE:
+        "//button[contains(@class,'mx-btn-icon-double-left')]",
     // INPUT_TGL_LAHIR_YEAR_BEFORE: "/html/body/div[3]/div/div/div[1]/button[1]",
     INPUT_TGL_LAHIR_MONTH_TABLE: "//table[contains(@class,'mx-table-month')]",
     // INPUT_TGL_LAHIR_MONTH_TABLE: "/html/body/div[3]/div/div/div[2]/table",
@@ -589,7 +590,8 @@ const X_PATH = {
     // INPUT_TGL_LAHIR_DAY_TABLE: "/html/body/div[3]/div/div/div[2]/table",
     INPUT_PEKERJAAN:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[7]/div/div/div[2]/div/div[1]",
-    INPUT_PEKERJAAN_PARENT: "//div[contains(@class,'modal-content')][.//div[text()='Pilih Pekerjaan']]",
+    INPUT_PEKERJAAN_PARENT:
+        "//div[contains(@class,'modal-content')][.//div[text()='Pilih Pekerjaan']]",
     // INPUT_PEKERJAAN_PARENT: "/html/body/div[3]/div[2]/div[2]/div",
     INPUT_ALAMAT_DOMISILI:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[8]/div/div[2]/div",
@@ -615,12 +617,16 @@ const X_PATH = {
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[2]/div/button",
     BTN_LANJUT_KUOTA_HABIS:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div[2]/div[2]/div/div[3]/div[2]/button",
-    BTN_PILIH_PESERTA:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[3]/div/table/tbody/tr/td[5]/div/button",
+    BTN_PILIH_PESERTA: "//button[.//div[text()='Pilih']]",
+    // BTN_PILIH_PESERTA:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[3]/div/table/tbody/tr/td[5]/div/button",
     BTN_DAFTAR_TANPA_NIK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[5]/div[2]/div[2]/button",
+    // BTN_DAFTAR_DENGAN_NIK:
+    //     "//button[.//div[text()='Daftarkan dengan NIK']]",
     BTN_DAFTAR_DENGAN_NIK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[5]/div[2]/div[1]/button",
+    MSG_POPUP_TERJADI_KESALAHAN: "//span[contains(text(), 'ada kesalahan')]",
     MSG_POPUP:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[6]/div[2]/div/div[1]/div",
     MSG_POPUP_SUCCESS:
