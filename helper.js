@@ -612,11 +612,15 @@ const X_PATH = {
     // INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT:
     //     "/html/body/div[3]/div[2]/div[4]/div",
     INPUT_TGL_PEMERIKSAAN_PARENT:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[2]/div[2]/div/div[2]/div[2]",
-    BTN_SELANJUTNYA:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[2]/div/button",
-    BTN_LANJUT_KUOTA_HABIS:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div[2]/div[2]/div/div[3]/div[2]/button",
+        "//div[text()='Tanggal Pemeriksaan']/following::div[contains(@class,'shadow-gmail')][1]",
+    // INPUT_TGL_PEMERIKSAAN_PARENT:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[2]/div[2]/div/div[2]/div[2]",
+    BTN_SELANJUTNYA: "//button[.//div[normalize-space()='Selanjutnya']]",
+    // BTN_SELANJUTNYA:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[2]/div/button",
+    BTN_LANJUT_KUOTA_HABIS: "//button[.//div[normalize-space()='Lanjut']]",
+    // BTN_LANJUT_KUOTA_HABIS:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div[2]/div[2]/div/div[3]/div[2]/button",
     BTN_PILIH_PESERTA: "//button[.//div[text()='Pilih']]",
     // BTN_PILIH_PESERTA:
     //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[3]/div/table/tbody/tr/td[5]/div/button",
@@ -626,7 +630,8 @@ const X_PATH = {
     //     "//button[.//div[text()='Daftarkan dengan NIK']]",
     BTN_DAFTAR_DENGAN_NIK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[3]/div[5]/div[2]/div[1]/button",
-    MSG_POPUP_TERJADI_KESALAHAN: "//span[contains(., 'Terjadi kesalahan')]/ancestor::div[contains(@class,'p-2')]//div[contains(@class,'my-4')]//span",
+    MSG_POPUP_TERJADI_KESALAHAN:
+        "//span[contains(., 'Terjadi kesalahan')]/ancestor::div[contains(@class,'p-2')]//div[contains(@class,'my-4')]//span",
     MSG_POPUP:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[6]/div[2]/div/div[1]/div",
     MSG_POPUP_SUCCESS:
@@ -691,4 +696,19 @@ const X_PATH = {
     BTN_KIRIM_RAPOR: `/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[1]/div[2]/div[1]/div`,
     BTN_KIRIM_RAPOR_OK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div[2]/div[2]/div/div[4]/div[2]/button",
+
+    // Version 2
+    INPUT_NIK_PENDAFTARAN: "//input[@id='nik']",
+    BTN_CEK_NIK_PENDAFTARAN: "//button[.//div[text()='Cek NIK']]",
+    BTN_GUNAKAN_NIK: "//button[.//div[normalize-space()='Gunakan Data']]",
+    POPUP_NIK_TIDAK_DITEMUKAN: "//div[contains(text(),'Data Tidak Ditemukan')]",
+    POPUP_INDIVIDU_SUDAH_MENERIMA_LAYANAN:
+        "//div[normalize-space()='Individu sudah menerima layanan']",
+    POPUP_DATA_PESERTA_VALID: "//div[normalize-space()='Data peserta valid']",
+    BTN_LANJUTKAN_DATA_VALID:
+        "//div[normalize-space()='Data peserta valid']/ancestor::div[contains(@class,'shadow-gmail')]//button[.//div[normalize-space()='Lanjutkan']]",
+    BTN_SELANJUTNYA_FORMULIR_PENDAFTARAN:
+        "//div[normalize-space()='Formulir Pendaftaran']/ancestor::div[contains(@class,'shadow-gmail')]//button[@type='submit'][.//div[normalize-space()='Selanjutnya']]",
+    BTN_MULAI_PEMERIKSAAN_TABLE:
+        "//table//tbody/tr[1]//button[.//div[normalize-space()='Mulai']]",
 };

@@ -38,17 +38,8 @@ async function runRobot(aktifData) {
                             );
                             clickElement(btnDaftar);
 
-                            if (inData.nik) {
-                                const inputNIK = await waitForElementAsync(
-                                    X_PATH.INPUT_NIK,
-                                );
-                                inputElementValue(inputNIK, inData.nik);
-                            } else {
-                                // const inputNoNIK = await waitForElementAsync(
-                                //     X_PATH.CHECKBOX_NO_NIK
-                                // );
-                                // clickElement(inputNoNIK);
-                                console.log("Message found: Tidak Ada NIK");
+                            if (!inData.nik) {
+                                console.warn("Message found: Tidak Ada NIK");
 
                                 return {
                                     success: false,
@@ -57,216 +48,41 @@ async function runRobot(aktifData) {
                                 };
                             }
 
-                            const inputNamaLengkap = await waitForElementAsync(
-                                X_PATH.INPUT_NAMA_LENGKAP,
+                            const inputNIK = await waitForElementAsync(
+                                X_PATH.INPUT_NIK_PENDAFTARAN,
                             );
-                            inputElementValue(inputNamaLengkap, inData.nama);
+                            inputElementValue(inputNIK, inData.nik);
 
-                            async function selectBirthYear(dateStr) {
-                                const tglLahir = parseDateString(dateStr);
-                                if (!tglLahir) return;
-
-                                const tglInput = await waitForElementAsync(
-                                    X_PATH.INPUT_TGL_LAHIR,
-                                );
-                                clickElement(tglInput);
-
-                                const yearBtn = await waitForElementAsync(
-                                    X_PATH.INPUT_TGL_LAHIR_YEAR,
-                                );
-                                clickElement(yearBtn);
-
-                                // Find and click day
-                                async function findDay() {
-                                    const dayTable = await waitForElementAsync(
-                                        X_PATH.INPUT_TGL_LAHIR_DAY_TABLE,
-                                    );
-                                    const xpath = `.//td[@title="${tglLahir.date}"]`;
-                                    const dayEl = document.evaluate(
-                                        xpath,
-                                        dayTable,
-                                        null,
-                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null,
-                                    ).singleNodeValue;
-                                    if (dayEl) clickElement(dayEl);
-                                }
-
-                                // Find and click month
-                                async function findMonth() {
-                                    const monthTable =
-                                        await waitForElementAsync(
-                                            X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
-                                        );
-                                    const xpath = `.//td[@data-month="${
-                                        tglLahir.month - 1
-                                    }"]`;
-                                    const monthEl = document.evaluate(
-                                        xpath,
-                                        monthTable,
-                                        null,
-                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null,
-                                    ).singleNodeValue;
-                                    if (monthEl) {
-                                        clickElement(monthEl);
-                                        await sleep(350); // wait for day table to render
-                                        await findDay();
-                                    }
-                                }
-
-                                // Find and click year (recursive if not found)
-                                async function findYear() {
-                                    const yearTable = await waitForElementAsync(
-                                        X_PATH.INPUT_TGL_LAHIR_YEAR_TABLE,
-                                    );
-                                    const xpath = `.//td[@data-year="${tglLahir.year}"]`;
-                                    const yearEl = document.evaluate(
-                                        xpath,
-                                        yearTable,
-                                        null,
-                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null,
-                                    ).singleNodeValue;
-
-                                    if (yearEl) {
-                                        clickElement(yearEl);
-                                        await sleep(350); // wait for month table to render
-                                        await findMonth();
-                                    } else {
-                                        const prevBtn =
-                                            await waitForElementAsync(
-                                                X_PATH.INPUT_TGL_LAHIR_YEAR_BEFORE,
-                                            );
-                                        clickElement(prevBtn);
-                                        await sleep(350); // small delay before retry
-                                        await findYear();
-                                    }
-                                }
-                                await sleep(350);
-                                await findYear();
-                            }
-                            await selectBirthYear(inData.tgl_lahir);
-
-                            const inputJK = await waitForElementAsync(
-                                X_PATH.INPUT_JENIS_KELAMIN,
+                            const btnCekNIK = await waitForElementAsync(
+                                X_PATH.BTN_CEK_NIK_PENDAFTARAN,
                             );
-                            clickElement(inputJK);
+                            clickElement(btnCekNIK);
 
-                            const isPerempuan =
-                                String(inData.jenis_kelamin).toLowerCase() ===
-                                "perempuan";
-                            if (isPerempuan) {
-                                const selPR = await waitForElementAsync(
-                                    X_PATH.SELECT_JK_PR,
-                                );
-                                clickElement(selPR);
-                            } else {
-                                const selLK = await waitForElementAsync(
-                                    X_PATH.SELECT_JK_LK,
-                                );
-                                clickElement(selLK);
-                            }
-
-                            const inputWA = await waitForElementAsync(
-                                X_PATH.INPUT_WA,
-                            );
-                            inputElementValue(
-                                inputWA,
-                                cleanPhoneNumber(inData.no_hp, defData.no_wa),
-                            );
-
-                            // Wait for ALAMAT input, fill it
-                            const inputAlamat = await waitForElementAsync(
-                                X_PATH.INPUT_ALAMAT,
-                            );
-                            inputElementValue(
-                                inputAlamat,
-                                inData.alamat || defData.alamat,
-                            );
-
-                            async function selectPekerjaan() {
-                                const inputPekerjaan =
+                            try {
+                                const checkIfNikNotFound =
                                     await waitForElementAsync(
-                                        X_PATH.INPUT_PEKERJAAN,
+                                        X_PATH.POPUP_NIK_TIDAK_DITEMUKAN,
                                     );
-                                clickElement(inputPekerjaan);
-                                const inputPekerjaanParent =
-                                    await waitForElementAsync(
-                                        X_PATH.INPUT_PEKERJAAN_PARENT,
-                                    );
-                                const xpath = `.//button[.//div[contains(normalize-space(text()), '${getPekerjaanLabel(
-                                    inData.pekerjaan,
-                                )}')]]`;
-                                const pekerjaanEl = document.evaluate(
-                                    xpath,
-                                    inputPekerjaanParent,
-                                    null,
-                                    XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                    null,
-                                ).singleNodeValue;
-                                if (pekerjaanEl) {
-                                    clickElement(pekerjaanEl);
+                                if (checkIfNikNotFound) {
+                                    console.warn("NIK Tidak Ditemukan!");
+                                    return {
+                                        success: false,
+                                        message: "NIK Tidak Ditemukan!",
+                                        noNik: true,
+                                    };
                                 }
-                            }
+                            } catch (err) {}
 
-                            await selectPekerjaan();
-
-                            async function selectAlamatDomisili() {
-                                const inputDomisili = await waitForElementAsync(
-                                    X_PATH.INPUT_ALAMAT_DOMISILI,
-                                );
-                                clickElement(inputDomisili);
-
-                                async function getKelDesa() {
-                                    const success = await selectWithRetry(
-                                        X_PATH.INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT,
-                                        defData.keldesa,
-                                    );
-                                }
-
-                                async function getKecamatan() {
-                                    const success = await selectWithRetry(
-                                        X_PATH.INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT,
-                                        defData.kecamatan,
-                                    );
-
-                                    if (success) {
-                                        await getKelDesa();
-                                    }
-                                }
-                                async function getKabKota() {
-                                    const success = await selectWithRetry(
-                                        X_PATH.INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT,
-                                        defData.kabkota,
-                                    );
-
-                                    if (success) {
-                                        await getKecamatan();
-                                    }
-                                }
-                                async function getProvinsi() {
-                                    const success = await selectWithRetry(
-                                        X_PATH.INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT,
-                                        defData.provinsi,
-                                    );
-
-                                    if (success) {
-                                        await getKabKota();
-                                    }
-                                }
-
-                                await getProvinsi();
-                            }
-
-                            await selectAlamatDomisili();
+                            const btnGunakanDataNIK = await waitForElementAsync(
+                                X_PATH.BTN_GUNAKAN_NIK,
+                            );
+                            clickElement(btnGunakanDataNIK);
 
                             async function selectTanggalPemeriksaan() {
                                 const tglParent = await waitForElementAsync(
                                     X_PATH.INPUT_TGL_PEMERIKSAAN_PARENT,
                                 );
-                                const xpath = `.//button[not(contains(@class,'cursor-not-allowed'))]/span[text()='${defData.tanggal_pemeriksaan}']/..`;
-
+                                const xpath = `.//button[.//span[text()='${defData.tanggal_pemeriksaan}'] and not(contains(@class,'cursor-not-allowed'))]`;
                                 const tglEl = document.evaluate(
                                     xpath,
                                     tglParent,
@@ -288,13 +104,54 @@ async function runRobot(aktifData) {
                             clickElement(btnSelanjutnya);
 
                             try {
-                                // CLICK LANJUT kuota habis if exist
                                 const btnLanjutKuotaHabis =
                                     await waitForElementAsync(
                                         X_PATH.BTN_LANJUT_KUOTA_HABIS,
                                     );
                                 clickElement(btnLanjutKuotaHabis);
                             } catch (err) {}
+
+                            try {
+                                const popupIndivideTelahMenerimaLayanan =
+                                    await waitForElementAsync(
+                                        X_PATH.POPUP_INDIVIDU_SUDAH_MENERIMA_LAYANAN,
+                                    );
+
+                                if (popupIndivideTelahMenerimaLayanan) {
+                                    console.warn(
+                                        "Individu sudah menerima layanan",
+                                    );
+                                    return {
+                                        success: false,
+                                        message:
+                                            "Individu sudah menerima layanan",
+                                        lainnya: true,
+                                    };
+                                }
+                            } catch (err) {}
+
+                            const btnLanjutkanDataValid =
+                                await waitForElementAsync(
+                                    X_PATH.BTN_LANJUTKAN_DATA_VALID,
+                                );
+                            clickElement(btnLanjutkanDataValid);
+
+                            async function clickSelanjutnya() {
+                                const btn = document.evaluate(
+                                    X_PATH.BTN_SELANJUTNYA_FORMULIR_PENDAFTARAN,
+                                    document,
+                                    null,
+                                    XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                    null,
+                                ).singleNodeValue;
+
+                                if (btn) {
+                                    btn.click();
+                                }
+                            }
+
+                            await clickSelanjutnya();
+                            setTimeout(clickSelanjutnya, 1000);
 
                             try {
                                 const msgPopup = await waitForElementAsync(
@@ -705,9 +562,37 @@ async function runRobotPemeriksaan(aktifData) {
                             enterKeyElement(inputSearchNik);
 
                             await sleepUntilLoaded();
+
+                            async function checkWhichTableExist() {
+                                const belum = document.evaluate(
+                                    "//div[contains(text(),'Belum Pemeriksaan')]//span",
+                                    document,
+                                    null,
+                                    XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                    null,
+                                ).singleNodeValue;
+
+                                const count = belum
+                                    ? parseInt(belum.textContent.trim())
+                                    : null;
+                                if (count === 0) {
+                                    // go to parent tab div
+                                    const belumTab =
+                                        belum.closest("div.cursor-pointer");
+
+                                    // next tab = Sedang Pemeriksaan
+                                    const sedang = belumTab?.nextElementSibling;
+                                    if (sedang) {
+                                        clickElement(sedang);
+                                    }
+                                }
+                            }
+                            // await sleep(750);
+                            await checkWhichTableExist();
+
                             // await sleep(750);
                             const btnMulai = await waitForElementAsync(
-                                X_PATH.BTN_MULAI_PELAYANAN,
+                                X_PATH.BTN_MULAI_PEMERIKSAAN_TABLE,
                             );
                             clickElement(btnMulai);
 
