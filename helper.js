@@ -563,20 +563,33 @@ const X_PATH = {
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[2]/div[1]/label/input",
     CHECKBOX_NO_NIK:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[2]/div[2]/div/div/div[1]/div",
-    INPUT_NAMA_LENGKAP:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[3]/div[1]/label/input",
+    // INPUT_NAMA_LENGKAP:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[3]/div[1]/label/input",
+    INPUT_NAMA_LENGKAP: "//input[@name='Nama']",
+    // INPUT_JENIS_KELAMIN:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[2]",
     INPUT_JENIS_KELAMIN:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[2]",
+        "//span[contains(text(),'Pilih jenis kelamin')]/parent::div",
+    // INPUT_JENIS_KELAMIN:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[2]",
     SELECT_JK_LK:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[3]/div/div[1]",
+        "//div[text()='Laki-laki']/ancestor::div[contains(@class,'cursor-pointer')]",
+    // SELECT_JK_LK:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[3]/div/div[1]",
     SELECT_JK_PR:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[3]/div/div[2]",
-    INPUT_WA:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[6]/div[1]/label/div[2]/input",
-    INPUT_ALAMAT:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[9]/div/label/textarea",
+        "//div[text()='Perempuan']/ancestor::div[contains(@class,'cursor-pointer')]",
+    // SELECT_JK_PR:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[3]/div/div[2]",
+    INPUT_WA: "//input[@name='Nomor Whatsapp']",
+    // INPUT_WA:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[6]/div[1]/label/div[2]/input",
+    INPUT_ALAMAT: "//textarea[@id='detail-domisili']",
+    // INPUT_ALAMAT:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[9]/div/label/textarea",
     INPUT_TGL_LAHIR:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[4]/div/div[2]/div/div",
+        "//div[@id='Tanggal Lahir']//div[contains(@class,'mx-input-wrapper')]",
+    // INPUT_TGL_LAHIR:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[4]/div/div[2]/div/div",
     INPUT_TGL_LAHIR_YEAR: "//button[contains(@class,'mx-btn-current-year')]",
     // INPUT_TGL_LAHIR_YEAR: "/html/body/div[3]/div/div/div[1]/span/button[2]",
     INPUT_TGL_LAHIR_YEAR_TABLE: "//table[contains(@class,'mx-table-year')]",
@@ -589,12 +602,16 @@ const X_PATH = {
     INPUT_TGL_LAHIR_DAY_TABLE: "//table[contains(@class,'mx-table-date')]",
     // INPUT_TGL_LAHIR_DAY_TABLE: "/html/body/div[3]/div/div/div[2]/table",
     INPUT_PEKERJAAN:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[7]/div/div/div[2]/div/div[1]",
+        "//div[contains(@class,'cursor-pointer') and contains(text(),'Pilih pekerjaan')]",
+    // INPUT_PEKERJAAN:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[7]/div/div/div[2]/div/div[1]",
     INPUT_PEKERJAAN_PARENT:
         "//div[contains(@class,'modal-content')][.//div[text()='Pilih Pekerjaan']]",
     // INPUT_PEKERJAAN_PARENT: "/html/body/div[3]/div[2]/div[2]/div",
     INPUT_ALAMAT_DOMISILI:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[8]/div/div[2]/div",
+        "//div[contains(@class,'cursor-pointer') and contains(text(),'Pilih alamat domisili')]",
+    // INPUT_ALAMAT_DOMISILI:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[8]/div/div[2]/div",
     INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT:
         "//div[text()='Daftar Provinsi']/parent::div",
     // INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT:
@@ -657,8 +674,9 @@ const X_PATH = {
     MSG_POPUP_BERHASIL_HADIR:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[4]/div[2]/div/div[1]/div[1]",
 
-    CHECKBOX_TANPA_WALI:
-        "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[4]/div/div[1]/div/div[1]/div",
+    CHECKBOX_TANPA_WALI: "//div[@class='check' and @id='noWali']",
+    // CHECKBOX_TANPA_WALI:
+    //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[4]/div/div[1]/div/div[1]/div",
     BTN_DAFTAR_TANPA_WALI:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[5]/div[2]/button",
 
@@ -711,4 +729,15 @@ const X_PATH = {
         "//div[normalize-space()='Formulir Pendaftaran']/ancestor::div[contains(@class,'shadow-gmail')]//button[@type='submit'][.//div[normalize-space()='Selanjutnya']]",
     BTN_MULAI_PEMERIKSAAN_TABLE:
         "//table//tbody/tr[1]//button[.//div[normalize-space()='Mulai']]",
+    // WALI
+
+    INPUT_NIK_WALI: "//input[@id='nik wali']",
+    INPUT_NAMA_LENGKAP_WALI: "//input[@name='Nama Lengkap Wali']",
+    INPUT_JENIS_KELAMIN_WALI:
+        "//span[contains(text(),'Pilih Jenis Kelamin')]/parent::div",
+    INPUT_WA_WALI: "//input[@name='Nomor whatsapp']",
+    INPUT_TGL_LAHIR_WALI:
+        "(//div[@id='Tanggal Lahir']//div[contains(@class,'mx-input-wrapper')])[2]",
+    POPUP_DATA_PESERTA_WALI_TIDAK_VALID:
+        "//div[normalize-space()='Data peserta atau wali tidak valid']",
 };

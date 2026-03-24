@@ -58,6 +58,7 @@ async function runRobot(aktifData) {
                             );
                             clickElement(btnCekNIK);
 
+                            let nikFound = true;
                             try {
                                 const checkIfNikNotFound =
                                     await waitForElementAsync(
@@ -65,18 +66,150 @@ async function runRobot(aktifData) {
                                     );
                                 if (checkIfNikNotFound) {
                                     console.warn("NIK Tidak Ditemukan!");
-                                    return {
-                                        success: false,
-                                        message: "NIK Tidak Ditemukan!",
-                                        noNik: true,
-                                    };
+                                    nikFound = false;
                                 }
                             } catch (err) {}
 
-                            const btnGunakanDataNIK = await waitForElementAsync(
-                                X_PATH.BTN_GUNAKAN_NIK,
-                            );
-                            clickElement(btnGunakanDataNIK);
+                            async function selectBirthYear(
+                                dateStr,
+                                xPathInput,
+                            ) {
+                                const tglLahir = parseDateString(dateStr);
+                                if (!tglLahir) return;
+
+                                const tglInput =
+                                    await waitForElementAsync(xPathInput);
+                                clickElement(tglInput);
+
+                                const yearBtn = await waitForElementAsync(
+                                    X_PATH.INPUT_TGL_LAHIR_YEAR,
+                                );
+                                clickElement(yearBtn);
+
+                                // Find and click day
+                                async function findDay() {
+                                    const dayTable = await waitForElementAsync(
+                                        X_PATH.INPUT_TGL_LAHIR_DAY_TABLE,
+                                    );
+                                    const xpath = `.//td[@title="${tglLahir.date}"]`;
+                                    const dayEl = document.evaluate(
+                                        xpath,
+                                        dayTable,
+                                        null,
+                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                        null,
+                                    ).singleNodeValue;
+                                    if (dayEl) clickElement(dayEl);
+                                }
+
+                                // Find and click month
+                                async function findMonth() {
+                                    const monthTable =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
+                                        );
+                                    const xpath = `.//td[@data-month="${
+                                        tglLahir.month - 1
+                                    }"]`;
+                                    const monthEl = document.evaluate(
+                                        xpath,
+                                        monthTable,
+                                        null,
+                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                        null,
+                                    ).singleNodeValue;
+                                    if (monthEl) {
+                                        clickElement(monthEl);
+                                        await sleep(350); // wait for day table to render
+                                        await findDay();
+                                    }
+                                }
+
+                                // Find and click year (recursive if not found)
+                                async function findYear() {
+                                    const yearTable = await waitForElementAsync(
+                                        X_PATH.INPUT_TGL_LAHIR_YEAR_TABLE,
+                                    );
+                                    const xpath = `.//td[@data-year="${tglLahir.year}"]`;
+                                    const yearEl = document.evaluate(
+                                        xpath,
+                                        yearTable,
+                                        null,
+                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                        null,
+                                    ).singleNodeValue;
+
+                                    if (yearEl) {
+                                        clickElement(yearEl);
+                                        await sleep(350); // wait for month table to render
+                                        await findMonth();
+                                    } else {
+                                        const prevBtn =
+                                            await waitForElementAsync(
+                                                X_PATH.INPUT_TGL_LAHIR_YEAR_BEFORE,
+                                            );
+                                        clickElement(prevBtn);
+                                        await sleep(350); // small delay before retry
+                                        await findYear();
+                                    }
+                                }
+                                await sleep(350);
+                                await findYear();
+                            }
+
+                            if (nikFound) {
+                                const btnGunakanDataNIK =
+                                    await waitForElementAsync(
+                                        X_PATH.BTN_GUNAKAN_NIK,
+                                    );
+                                clickElement(btnGunakanDataNIK);
+                            } else {
+                                const inputNamaLengkap =
+                                    await waitForElementAsync(
+                                        X_PATH.INPUT_NAMA_LENGKAP,
+                                    );
+                                inputElementValue(
+                                    inputNamaLengkap,
+                                    inData.nama,
+                                );
+
+                                await selectBirthYear(
+                                    inData.tgl_lahir,
+                                    X_PATH.INPUT_TGL_LAHIR,
+                                );
+
+                                const inputJK = await waitForElementAsync(
+                                    X_PATH.INPUT_JENIS_KELAMIN,
+                                );
+                                clickElement(inputJK);
+
+                                const isPerempuan =
+                                    String(
+                                        inData.jenis_kelamin,
+                                    ).toLowerCase() === "perempuan";
+                                if (isPerempuan) {
+                                    const selPR = await waitForElementAsync(
+                                        X_PATH.SELECT_JK_PR,
+                                    );
+                                    clickElement(selPR);
+                                } else {
+                                    const selLK = await waitForElementAsync(
+                                        X_PATH.SELECT_JK_LK,
+                                    );
+                                    clickElement(selLK);
+                                }
+
+                                const inputWA = await waitForElementAsync(
+                                    X_PATH.INPUT_WA,
+                                );
+                                inputElementValue(
+                                    inputWA,
+                                    cleanPhoneNumber(
+                                        inData.no_hp,
+                                        defData.no_wa,
+                                    ),
+                                );
+                            }
 
                             async function selectTanggalPemeriksaan() {
                                 const tglParent = await waitForElementAsync(
@@ -96,6 +229,68 @@ async function runRobot(aktifData) {
                             }
 
                             await selectTanggalPemeriksaan();
+
+                            if (isOver60Years(inData.tgl_lahir)) {
+                                const checkboxTanpaWali =
+                                    await waitForElementAsync(
+                                        X_PATH.CHECKBOX_TANPA_WALI,
+                                    );
+                                clickElement(checkboxTanpaWali);
+                            } else if (isUnder10Years(inData.tgl_lahir)) {
+                                const inputNIKWali = await waitForElementAsync(
+                                    X_PATH.INPUT_NIK_WALI,
+                                );
+                                inputElementValue(
+                                    inputNIKWali,
+                                    inData.nik_wali || inData.nik,
+                                );
+                                const inputNamaLengkapWali =
+                                    await waitForElementAsync(
+                                        X_PATH.INPUT_NAMA_LENGKAP_WALI,
+                                    );
+                                inputElementValue(
+                                    inputNamaLengkapWali,
+                                    inData.nama_wali || inData.nama,
+                                );
+
+                                await selectBirthYear(
+                                    inData.tgl_lahir_wali || inData.tgl_lahir,
+                                    X_PATH.INPUT_TGL_LAHIR_WALI,
+                                );
+
+                                const inputJKWali = await waitForElementAsync(
+                                    X_PATH.INPUT_JENIS_KELAMIN_WALI,
+                                );
+                                clickElement(inputJKWali);
+
+                                const isPerempuan =
+                                    String(
+                                        inData.jenis_kelamin_wali ||
+                                            inData.jenis_kelamin,
+                                    ).toLowerCase() === "perempuan";
+                                if (isPerempuan) {
+                                    const selPR = await waitForElementAsync(
+                                        X_PATH.SELECT_JK_PR,
+                                    );
+                                    clickElement(selPR);
+                                } else {
+                                    const selLK = await waitForElementAsync(
+                                        X_PATH.SELECT_JK_LK,
+                                    );
+                                    clickElement(selLK);
+                                }
+
+                                const inputWAWali = await waitForElementAsync(
+                                    X_PATH.INPUT_WA_WALI,
+                                );
+                                inputElementValue(
+                                    inputWAWali,
+                                    cleanPhoneNumber(
+                                        inData.no_hp_wali || inData.no_hp,
+                                        defData.no_wa,
+                                    ),
+                                );
+                            }
 
                             // CLICK SELANJUTNYA
                             const btnSelanjutnya = await waitForElementAsync(
@@ -130,11 +325,118 @@ async function runRobot(aktifData) {
                                 }
                             } catch (err) {}
 
+                            try {
+                                const popupDataPesertaWaliTidakValid =
+                                    await waitForElementAsync(
+                                        X_PATH.POPUP_DATA_PESERTA_WALI_TIDAK_VALID,
+                                    );
+
+                                if (popupDataPesertaWaliTidakValid) {
+                                    console.warn(
+                                        "Data peserta atau wali tidak valid",
+                                    );
+                                    return {
+                                        success: false,
+                                        message:
+                                            "Data peserta atau wali tidak valid",
+                                        lainnya: true,
+                                    };
+                                }
+                            } catch (err) {}
+
                             const btnLanjutkanDataValid =
                                 await waitForElementAsync(
                                     X_PATH.BTN_LANJUTKAN_DATA_VALID,
                                 );
                             clickElement(btnLanjutkanDataValid);
+
+                            if (!nikFound) {
+                                const inputAlamat = await waitForElementAsync(
+                                    X_PATH.INPUT_ALAMAT,
+                                );
+                                inputElementValue(
+                                    inputAlamat,
+                                    inData.alamat || defData.alamat,
+                                );
+
+                                async function selectPekerjaan() {
+                                    const inputPekerjaan =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_PEKERJAAN,
+                                        );
+                                    clickElement(inputPekerjaan);
+
+                                    const inputPekerjaanParent =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_PEKERJAAN_PARENT,
+                                        );
+                                    const xpath = `.//button[.//div[contains(normalize-space(text()), '${getPekerjaanLabel(
+                                        inData.pekerjaan,
+                                    )}')]]`;
+                                    const pekerjaanEl = document.evaluate(
+                                        xpath,
+                                        inputPekerjaanParent,
+                                        null,
+                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                        null,
+                                    ).singleNodeValue;
+                                    if (pekerjaanEl) {
+                                        clickElement(pekerjaanEl);
+                                    }
+                                }
+
+                                await selectPekerjaan();
+
+                                async function selectAlamatDomisili() {
+                                    const inputDomisili =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_ALAMAT_DOMISILI,
+                                        );
+                                    clickElement(inputDomisili);
+
+                                    async function getKelDesa() {
+                                        const success = await selectWithRetry(
+                                            X_PATH.INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT,
+                                            defData.keldesa,
+                                        );
+                                    }
+
+                                    async function getKecamatan() {
+                                        const success = await selectWithRetry(
+                                            X_PATH.INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT,
+                                            defData.kecamatan,
+                                        );
+
+                                        if (success) {
+                                            await getKelDesa();
+                                        }
+                                    }
+                                    async function getKabKota() {
+                                        const success = await selectWithRetry(
+                                            X_PATH.INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT,
+                                            defData.kabkota,
+                                        );
+
+                                        if (success) {
+                                            await getKecamatan();
+                                        }
+                                    }
+                                    async function getProvinsi() {
+                                        const success = await selectWithRetry(
+                                            X_PATH.INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT,
+                                            defData.provinsi,
+                                        );
+
+                                        if (success) {
+                                            await getKabKota();
+                                        }
+                                    }
+
+                                    await getProvinsi();
+                                }
+
+                                await selectAlamatDomisili();
+                            }
 
                             async function clickSelanjutnya() {
                                 const btn = document.evaluate(
@@ -219,21 +521,6 @@ async function runRobot(aktifData) {
                                         X_PATH.BTN_DAFTAR_TANPA_NIK,
                                     );
                                 clickElement(btnDaftarNoNIK);
-                            }
-
-                            if (isOver60Years(inData.tgl_lahir)) {
-                                await sleep(500);
-                                const checkboxTanpaWali =
-                                    await waitForElementAsync(
-                                        X_PATH.CHECKBOX_TANPA_WALI,
-                                    );
-                                clickElement(checkboxTanpaWali);
-                                await sleep(500);
-                                const btnDaftarTanpaWali =
-                                    await waitForElementAsync(
-                                        X_PATH.BTN_DAFTAR_TANPA_WALI,
-                                    );
-                                clickElement(btnDaftarTanpaWali);
                             }
 
                             try {
