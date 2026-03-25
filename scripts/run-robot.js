@@ -237,59 +237,66 @@ async function runRobot(aktifData) {
                                     );
                                 clickElement(checkboxTanpaWali);
                             } else if (isUnder10Years(inData.tgl_lahir)) {
-                                const inputNIKWali = await waitForElementAsync(
-                                    X_PATH.INPUT_NIK_WALI,
-                                );
-                                inputElementValue(
-                                    inputNIKWali,
-                                    inData.nik_wali || inData.nik,
-                                );
-                                const inputNamaLengkapWali =
-                                    await waitForElementAsync(
-                                        X_PATH.INPUT_NAMA_LENGKAP_WALI,
+                                console.log("HERE");
+                                if (!nikFound) {
+                                    const inputNIKWali =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_NIK_WALI,
+                                        );
+                                    inputElementValue(
+                                        inputNIKWali,
+                                        inData.nik_wali || inData.nik,
                                     );
-                                inputElementValue(
-                                    inputNamaLengkapWali,
-                                    inData.nama_wali || inData.nama,
-                                );
-
-                                await selectBirthYear(
-                                    inData.tgl_lahir_wali || inData.tgl_lahir,
-                                    X_PATH.INPUT_TGL_LAHIR_WALI,
-                                );
-
-                                const inputJKWali = await waitForElementAsync(
-                                    X_PATH.INPUT_JENIS_KELAMIN_WALI,
-                                );
-                                clickElement(inputJKWali);
-
-                                const isPerempuan =
-                                    String(
-                                        inData.jenis_kelamin_wali ||
-                                            inData.jenis_kelamin,
-                                    ).toLowerCase() === "perempuan";
-                                if (isPerempuan) {
-                                    const selPR = await waitForElementAsync(
-                                        X_PATH.SELECT_JK_PR,
+                                    const inputNamaLengkapWali =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_NAMA_LENGKAP_WALI,
+                                        );
+                                    inputElementValue(
+                                        inputNamaLengkapWali,
+                                        inData.nama_wali || inData.nama,
                                     );
-                                    clickElement(selPR);
-                                } else {
-                                    const selLK = await waitForElementAsync(
-                                        X_PATH.SELECT_JK_LK,
+
+                                    await selectBirthYear(
+                                        inData.tgl_lahir_wali ||
+                                            inData.tgl_lahir,
+                                        X_PATH.INPUT_TGL_LAHIR_WALI,
                                     );
-                                    clickElement(selLK);
+
+                                    const inputJKWali =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_JENIS_KELAMIN_WALI,
+                                        );
+                                    clickElement(inputJKWali);
+
+                                    const isPerempuan =
+                                        String(
+                                            inData.jenis_kelamin_wali ||
+                                                inData.jenis_kelamin,
+                                        ).toLowerCase() === "perempuan";
+                                    if (isPerempuan) {
+                                        const selPR = await waitForElementAsync(
+                                            X_PATH.SELECT_JK_PR,
+                                        );
+                                        clickElement(selPR);
+                                    } else {
+                                        const selLK = await waitForElementAsync(
+                                            X_PATH.SELECT_JK_LK,
+                                        );
+                                        clickElement(selLK);
+                                    }
+
+                                    const inputWAWali =
+                                        await waitForElementAsync(
+                                            X_PATH.INPUT_WA_WALI,
+                                        );
+                                    inputElementValue(
+                                        inputWAWali,
+                                        cleanPhoneNumber(
+                                            inData.no_hp_wali || inData.no_hp,
+                                            defData.no_wa,
+                                        ),
+                                    );
                                 }
-
-                                const inputWAWali = await waitForElementAsync(
-                                    X_PATH.INPUT_WA_WALI,
-                                );
-                                inputElementValue(
-                                    inputWAWali,
-                                    cleanPhoneNumber(
-                                        inData.no_hp_wali || inData.no_hp,
-                                        defData.no_wa,
-                                    ),
-                                );
                             }
 
                             // CLICK SELANJUTNYA
