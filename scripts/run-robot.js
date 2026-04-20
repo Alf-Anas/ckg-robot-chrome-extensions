@@ -68,7 +68,7 @@ async function runRobot(aktifData) {
                                     console.warn("NIK Tidak Ditemukan!");
                                     nikFound = false;
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
 
                             async function selectBirthYear(
                                 dateStr,
@@ -108,9 +108,8 @@ async function runRobot(aktifData) {
                                         await waitForElementAsync(
                                             X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
                                         );
-                                    const xpath = `.//td[@data-month="${
-                                        tglLahir.month - 1
-                                    }"]`;
+                                    const xpath = `.//td[@data-month="${tglLahir.month - 1
+                                        }"]`;
                                     const monthEl = document.evaluate(
                                         xpath,
                                         monthTable,
@@ -258,7 +257,7 @@ async function runRobot(aktifData) {
 
                                     await selectBirthYear(
                                         inData.tgl_lahir_wali ||
-                                            inData.tgl_lahir,
+                                        inData.tgl_lahir,
                                         X_PATH.INPUT_TGL_LAHIR_WALI,
                                     );
 
@@ -271,7 +270,7 @@ async function runRobot(aktifData) {
                                     const isPerempuan =
                                         String(
                                             inData.jenis_kelamin_wali ||
-                                                inData.jenis_kelamin,
+                                            inData.jenis_kelamin,
                                         ).toLowerCase() === "perempuan";
                                     if (isPerempuan) {
                                         const selPR = await waitForElementAsync(
@@ -311,7 +310,7 @@ async function runRobot(aktifData) {
                                         X_PATH.BTN_LANJUT_KUOTA_HABIS,
                                     );
                                 clickElement(btnLanjutKuotaHabis);
-                            } catch (err) {}
+                            } catch (err) { }
 
                             try {
                                 const popupIndivideTelahMenerimaLayanan =
@@ -330,7 +329,7 @@ async function runRobot(aktifData) {
                                         lainnya: true,
                                     };
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
 
                             try {
                                 const popupDataPesertaWaliTidakValid =
@@ -349,7 +348,7 @@ async function runRobot(aktifData) {
                                         lainnya: true,
                                     };
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
 
                             const btnLanjutkanDataValid =
                                 await waitForElementAsync(
@@ -357,93 +356,94 @@ async function runRobot(aktifData) {
                                 );
                             clickElement(btnLanjutkanDataValid);
 
-                            if (!nikFound) {
-                                const inputAlamat = await waitForElementAsync(
-                                    X_PATH.INPUT_ALAMAT,
-                                );
-                                inputElementValue(
-                                    inputAlamat,
-                                    inData.alamat || defData.alamat,
-                                );
+                            // if (!nikFound) {
+                            //     console.log("NOT FOUND NIK")
+                            //     const inputAlamat = await waitForElementAsync(
+                            //         X_PATH.INPUT_ALAMAT,
+                            //     );
+                            //     inputElementValue(
+                            //         inputAlamat,
+                            //         inData.alamat || defData.alamat,
+                            //     );
 
-                                async function selectPekerjaan() {
-                                    const inputPekerjaan =
-                                        await waitForElementAsync(
-                                            X_PATH.INPUT_PEKERJAAN,
-                                        );
-                                    clickElement(inputPekerjaan);
+                            //     async function selectPekerjaan() {
+                            //         const inputPekerjaan =
+                            //             await waitForElementAsync(
+                            //                 X_PATH.INPUT_PEKERJAAN,
+                            //             );
+                            //         clickElement(inputPekerjaan);
 
-                                    const inputPekerjaanParent =
-                                        await waitForElementAsync(
-                                            X_PATH.INPUT_PEKERJAAN_PARENT,
-                                        );
-                                    const xpath = `.//button[.//div[contains(normalize-space(text()), '${getPekerjaanLabel(
-                                        inData.pekerjaan,
-                                    )}')]]`;
-                                    const pekerjaanEl = document.evaluate(
-                                        xpath,
-                                        inputPekerjaanParent,
-                                        null,
-                                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                                        null,
-                                    ).singleNodeValue;
-                                    if (pekerjaanEl) {
-                                        clickElement(pekerjaanEl);
-                                    }
-                                }
+                            //         const inputPekerjaanParent =
+                            //             await waitForElementAsync(
+                            //                 X_PATH.INPUT_PEKERJAAN_PARENT,
+                            //             );
+                            //         const xpath = `.//button[.//div[contains(normalize-space(text()), '${getPekerjaanLabel(
+                            //             inData.pekerjaan,
+                            //         )}')]]`;
+                            //         const pekerjaanEl = document.evaluate(
+                            //             xpath,
+                            //             inputPekerjaanParent,
+                            //             null,
+                            //             XPathResult.FIRST_ORDERED_NODE_TYPE,
+                            //             null,
+                            //         ).singleNodeValue;
+                            //         if (pekerjaanEl) {
+                            //             clickElement(pekerjaanEl);
+                            //         }
+                            //     }
 
-                                await selectPekerjaan();
+                            //     await selectPekerjaan();
 
-                                async function selectAlamatDomisili() {
-                                    const inputDomisili =
-                                        await waitForElementAsync(
-                                            X_PATH.INPUT_ALAMAT_DOMISILI,
-                                        );
-                                    clickElement(inputDomisili);
+                            //     async function selectAlamatDomisili() {
+                            //         const inputDomisili =
+                            //             await waitForElementAsync(
+                            //                 X_PATH.INPUT_ALAMAT_DOMISILI,
+                            //             );
+                            //         clickElement(inputDomisili);
 
-                                    async function getKelDesa() {
-                                        const success = await selectWithRetry(
-                                            X_PATH.INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT,
-                                            defData.keldesa,
-                                        );
-                                    }
+                            //         async function getKelDesa() {
+                            //             const success = await selectWithRetry(
+                            //                 X_PATH.INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT,
+                            //                 defData.keldesa,
+                            //             );
+                            //         }
 
-                                    async function getKecamatan() {
-                                        const success = await selectWithRetry(
-                                            X_PATH.INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT,
-                                            defData.kecamatan,
-                                        );
+                            //         async function getKecamatan() {
+                            //             const success = await selectWithRetry(
+                            //                 X_PATH.INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT,
+                            //                 defData.kecamatan,
+                            //             );
 
-                                        if (success) {
-                                            await getKelDesa();
-                                        }
-                                    }
-                                    async function getKabKota() {
-                                        const success = await selectWithRetry(
-                                            X_PATH.INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT,
-                                            defData.kabkota,
-                                        );
+                            //             if (success) {
+                            //                 await getKelDesa();
+                            //             }
+                            //         }
+                            //         async function getKabKota() {
+                            //             const success = await selectWithRetry(
+                            //                 X_PATH.INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT,
+                            //                 defData.kabkota,
+                            //             );
 
-                                        if (success) {
-                                            await getKecamatan();
-                                        }
-                                    }
-                                    async function getProvinsi() {
-                                        const success = await selectWithRetry(
-                                            X_PATH.INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT,
-                                            defData.provinsi,
-                                        );
+                            //             if (success) {
+                            //                 await getKecamatan();
+                            //             }
+                            //         }
+                            //         async function getProvinsi() {
+                            //             const success = await selectWithRetry(
+                            //                 X_PATH.INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT,
+                            //                 defData.provinsi,
+                            //             );
 
-                                        if (success) {
-                                            await getKabKota();
-                                        }
-                                    }
+                            //             if (success) {
+                            //                 await getKabKota();
+                            //             }
+                            //         }
 
-                                    await getProvinsi();
-                                }
+                            //         await getProvinsi();
+                            //     }
 
-                                await selectAlamatDomisili();
-                            }
+                            //     await selectAlamatDomisili();
+                            // }
 
                             async function clickSelanjutnya() {
                                 const btn = document.evaluate(
@@ -506,7 +506,7 @@ async function runRobot(aktifData) {
                                         };
                                     }
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
 
                             if (inData.nik) {
                                 // CLICK PILIH
@@ -544,7 +544,7 @@ async function runRobot(aktifData) {
                                         lainnya: true,
                                     };
                                 }
-                            } catch (err) {}
+                            } catch (err) { }
 
                             // CLICK CEK POPUP
                             try {
@@ -754,16 +754,16 @@ document.getElementById("runBtn").addEventListener("click", async () => {
         let eStatus = result?.belumSesuaiKTP
             ? "Nama dan NIK Beda"
             : result?.sudahDidaftarkan
-              ? "Double Data"
-              : result?.noNik
-                ? "Lainnya"
-                : result?.pembatasanUmurPemeriksaan
-                  ? "Lainnya"
-                  : result?.lainnya
+                ? "Double Data"
+                : result?.noNik
                     ? "Lainnya"
-                    : result?.success
-                      ? "--On Progress--"
-                      : "";
+                    : result?.pembatasanUmurPemeriksaan
+                        ? "Lainnya"
+                        : result?.lainnya
+                            ? "Lainnya"
+                            : result?.success
+                                ? "--On Progress--"
+                                : "";
         let eKeterangan = result?.message;
         if (!eStatus) continue;
         if (eStatus === "--On Progress--") {
@@ -1234,15 +1234,15 @@ document.getElementById("runPelayanan").addEventListener("click", async () => {
             const find = logsData.find((it) => it.no === iData.no);
             const eStatus =
                 PemeriksaanStatus.pemeriksaan === "Sudah" &&
-                PemeriksaanStatus.rapor === "Sudah"
+                    PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Input"
                     : "";
             const eKeterangan =
                 PemeriksaanStatus.rapor === "Sudah"
                     ? "Berhasil Kirim Rapor"
                     : PemeriksaanStatus.pemeriksaan === "Sudah"
-                      ? "Selesai Pemeriksaan"
-                      : "";
+                        ? "Selesai Pemeriksaan"
+                        : "";
 
             if (find) {
                 find.status = eStatus || find.status;

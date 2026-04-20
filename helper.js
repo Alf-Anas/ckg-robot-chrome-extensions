@@ -724,9 +724,9 @@ const X_PATH = {
         "//div[normalize-space()='Individu sudah menerima layanan']",
     POPUP_DATA_PESERTA_VALID: "//div[normalize-space()='Data peserta valid']",
     BTN_LANJUTKAN_DATA_VALID:
-        "//div[normalize-space()='Data peserta valid']/ancestor::div[contains(@class,'shadow-gmail')]//button[.//div[normalize-space()='Lanjutkan']]",
+        "//div[contains(normalize-space(),'Data peserta valid')]/ancestor::div[contains(@class,'shadow-gmail')]//button[.//*[normalize-space()='Lanjutkan']]",
     BTN_SELANJUTNYA_FORMULIR_PENDAFTARAN:
-        "//div[normalize-space()='Formulir Pendaftaran']/ancestor::div[contains(@class,'shadow-gmail')]//button[@type='submit'][.//div[normalize-space()='Selanjutnya']]",
+        "//button[.//*[normalize-space()='Selanjutnya']]",
     BTN_MULAI_PEMERIKSAAN_TABLE:
         "//table//tbody/tr[1]//button[.//div[normalize-space()='Mulai']]",
     // WALI
