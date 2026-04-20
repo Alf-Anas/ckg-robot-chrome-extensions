@@ -23,6 +23,7 @@ jobs:
           rsync -av \
             --exclude ".git" \
             --exclude ".github" \
+            --exclude "update.ps1" \
             --exclude "node_modules" \
             --exclude "release" \
             ./ release/
