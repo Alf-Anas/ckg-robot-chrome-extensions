@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>CKG Robot</title>
+        <link href="lib/bootstrap.min.css" rel="stylesheet" />
+        <script src="lib/bootstrap.bundle.min.js"></script>
+        <script src="lib/sweetalert2.js"></script>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body class="p-3 position-relative">
+        <div style="min-height: 80px">
+            <h4 class="text-primary">🤖 CKG Robot</h4>
+        </div>
+
+        <div
+            style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                text-align: center;
+            "
+        >
+            <a
+                href="https://trakteer.id/alf-anas"
+                target="_blank"
+                style="display: inline-block; margin-bottom: 5px"
+            >
+                <img
+                    src="https://cdn.trakteer.id/images/embed/trbtn-red-1.png"
+                    alt="Trakteer Saya"
+                    style="max-height: 50px; max-width: 181px"
+                    loading="lazy"
+                />
+            </a>
+            <div style="font-size: 13px; color: #555">
+                Created by <strong>Alf-Anas</strong> |
+                <a
+                    href="https://geoit.dev"
+                    target="_blank"
+                    style="color: #007bff; text-decoration: none"
+                >
+                    geoit.dev
+                </a>
+            </div>
+        </div>
+
+        <button
+            id="openDataPreparation"
+            class="btn btn-primary w-100 mt-2 mb-2"
+        >
+            Persiapan Data
+        </button>
+        <div class="mb-3">
+            <div class="form-group p-1 border rounded bg-light">
+                <label
+                    for="tanggal_pemeriksaan"
+                    class="form-label fw-bold mb-1 d-block"
+                    title="Tanggal Pemeriksaan"
+                    >Tanggal Pemeriksaan</label
+                >
+                <select id="tanggal_pemeriksaan" class="form-select">
+                    <!-- Opsi 1-31 akan di-generate otomatis via JS agar kode HTML bersih -->
+                </select>
+            </div>
+        </div>
+
+        <hr />
+        <button id="btnRefresh" class="btn btn-primary btn-sm w-100 mt-2 mb-1">
+            Refresh Data
+        </button>
+        <div
+            class="table-responsive hide-on-minimized"
+            style="max-height: 400px; overflow-y: auto; overflow-x: auto"
+        >
+            <table
+                class="table table-bordered table-striped table-sm table-compact text-nowrap"
+            >
+                <thead class="table-dark">
+                    <tr>
+                        <th>Aksi</th>
+                        <th>Validitas</th>
+                        <th>No</th>
+                        <th>NIK</th>
+                        <th>Nama</th>
+                        <th style="white-space: nowrap">Tgl Lahir</th>
+                        <th style="white-space: nowrap">Jenis Kelamin</th>
+                        <th style="white-space: nowrap">Status Usia</th>
+                        <th style="white-space: nowrap">Status Input</th>
+                        <th>Pendaftaran</th>
+                        <th>Kehadiran</th>
+                        <th>Pemeriksaan</th>
+                        <th>Rapor</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody id="tBodyAktifData">
+                    <!-- Data akan dimasukkan lewat JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="accordion my-2" id="accordionSummary">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSummary">
+                    <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseSummary"
+                        aria-controls="collapseSummary"
+                    >
+                        Ringkasan
+                    </button>
+                </h2>
+                <div
+                    id="collapseSummary"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingSummary"
+                    aria-expanded="true"
+                    data-bs-parent="#accordionSummary"
+                >
+                    <div class="accordion-body show">
+                        <div id="summary"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div
+                class="d-flex flex-wrap gap-3 mb-3 p-2 border rounded bg-light"
+            >
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="chkPendaftaran"
+                        checked
+                    />
+                    <label
+                        class="form-check-label small fw-bold"
+                        for="chkPendaftaran"
+                        >Pendaftaran</label
+                    >
+                </div>
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="chkKehadiran"
+                        checked
+                    />
+                    <label
+                        class="form-check-label small fw-bold"
+                        for="chkKehadiran"
+                        >Kehadiran</label
+                    >
+                </div>
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="chkPemeriksaan"
+                        checked
+                    />
+                    <label
+                        class="form-check-label small fw-bold"
+                        for="chkPemeriksaan"
+                        >Pemeriksaan</label
+                    >
+                </div>
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="chkRapor"
+                        checked
+                    />
+                    <label class="form-check-label small fw-bold" for="chkRapor"
+                        >Rapor</label
+                    >
+                </div>
+            </div>
+            <button id="runProcessBtn" class="btn btn-success w-100">
+                <i class="bi bi-play-fill"></i> Jalankan Proses Terpilih
+            </button>
+        </div>
+
+        <div
+            id="parent-text-message"
+            class="alert alert-warning d-flex align-items-center d-none"
+            role="alert"
+        >
+            <svg
+                class="bi flex-shrink-0 me-2"
+                width="24"
+                height="24"
+                role="img"
+                aria-label="Warning:"
+            >
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div
+                id="text-message"
+                style="
+                    max-height: 120px;
+                    overflow-y: auto;
+                    width: 100%;
+                    word-break: break-word;
+                "
+            ></div>
+        </div>
+        <div
+            id="loading-spinner"
+            class="text-center mx-auto w-100"
+            style="display: none"
+        >
+            <p class="text-center">
+                ⚠️ Jangan tutup atau close window ini, proses sedang berjalan!
+            </p>
+            <div class="spinner-grow text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-success" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-danger" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow text-dark" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <button id="openDashboard" class="btn btn-warning w-100 mt-2 mb-4">
+            Lihat Dashboard
+        </button>
+
+        <script src="scripts/constant.js"></script>
+        <script src="scripts/helper.js"></script>
+        <script src="scripts/panel.js"></script>
+        <script src="scripts/robot-pendaftaran.js"></script>
+        <script src="scripts/robot-kehadiran.js"></script>
+
+        <!-- <script src="lib/xlsx.full.min.js"></script> -->
+        <!-- <script src="helper.js"></script> -->
+        <!-- <script src="scripts/common.js"></script> -->
+        <!-- <script src="scripts/load-data.js"></script> -->
+        <!-- <script src="scripts/run-robot.js"></script> -->
+    </body>
+</html>

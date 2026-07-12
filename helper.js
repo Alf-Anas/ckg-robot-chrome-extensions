@@ -20,7 +20,12 @@ function waitForElement(xpath, callback, parentEl, maxTries = 10) {
             const delay = 500 * attempt;
             setTimeout(tryFind, delay);
         } else {
-            console.warn("Element not found after", maxTries, "attempts");
+            console.warn(
+                "Element not found after",
+                maxTries,
+                "attempts",
+                xpath,
+            );
         }
     }
 
@@ -200,6 +205,19 @@ function isUnder10Years(dateStr) {
     }
 
     return age < 10;
+}
+
+function isUnder6Years(dateStr) {
+    const birthDate = parseDDMMYYYY(dateStr);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--; // adjust if birthday hasn’t passed yet this year
+    }
+
+    return age < 6;
 }
 
 function isOver60Years(dateStr) {
@@ -611,6 +629,8 @@ const X_PATH = {
     INPUT_ALAMAT_DOMISILI:
         "//div[contains(@class,'cursor-pointer') and contains(text(),'Pilih alamat domisili')]",
     // INPUT_ALAMAT_DOMISILI:
+    //     "//div[contains(text(), 'Alamat Domisili')]/following-sibling::div/div[contains(@class, 'cursor-pointer')]",
+    // INPUT_ALAMAT_DOMISILI:
     //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[8]/div/div[2]/div",
     INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT:
         "//div[text()='Daftar Provinsi']/parent::div",
@@ -727,6 +747,9 @@ const X_PATH = {
         "//div[contains(normalize-space(),'Data peserta valid')]/ancestor::div[contains(@class,'shadow-gmail')]//button[.//*[normalize-space()='Lanjutkan']]",
     BTN_SELANJUTNYA_FORMULIR_PENDAFTARAN:
         "//button[.//*[normalize-space()='Selanjutnya']]",
+    BTN_PILIH_TABLE_DATA_PESERTA:
+        "//table/tbody/tr[1]//button[contains(., 'Pilih')]",
+    BTN_DAFTARKAN_DENGAN_NIK: "//button[contains(., 'Daftarkan dengan NIK')]",
     BTN_MULAI_PEMERIKSAAN_TABLE:
         "//table//tbody/tr[1]//button[.//div[normalize-space()='Mulai']]",
     // WALI
@@ -740,4 +763,12 @@ const X_PATH = {
         "(//div[@id='Tanggal Lahir']//div[contains(@class,'mx-input-wrapper')])[2]",
     POPUP_DATA_PESERTA_WALI_TIDAK_VALID:
         "//div[normalize-space()='Data peserta atau wali tidak valid']",
+    POPUP_DATA_PESERTA_TIDAK_VALID:
+        "//div[normalize-space()='Data peserta tidak valid']",
+
+    // Formulir Pendaftaran
+    INPUT_STATUS_PERNIKAHAN:
+        "//span[contains(text(),'Pilih status pernikahan')]/parent::div",
+    INPUT_STATUS_DISABILITAS:
+        "//div[contains(text(), 'Penyandang disabilitas')]/following-sibling::div//span[contains(@class, 'line-clamp-2')]",
 };

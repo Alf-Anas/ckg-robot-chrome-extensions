@@ -1,3 +1,5 @@
+
+
 document.getElementById("openDashboard").addEventListener("click", async () => {
     const url = chrome.runtime.getURL("dashboard.html");
     chrome.tabs.create({ url });
