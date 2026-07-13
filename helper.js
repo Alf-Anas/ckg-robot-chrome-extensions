@@ -88,7 +88,7 @@ function enterKeyElement(el) {
             keyCode: 13,
             which: 13,
             bubbles: true,
-            cancelable: true
+            cancelable: true,
         };
 
         el.dispatchEvent(new KeyboardEvent("keydown", eventProps));
@@ -98,8 +98,8 @@ function enterKeyElement(el) {
 }
 
 function makeXPathCaseInsensitive(text) {
-    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
     return `translate(normalize-space(.), '${uppercase}', '${lowercase}')`;
 }
 
@@ -256,6 +256,16 @@ function isOver60Years(dateStr) {
     }
 
     return age >= 60;
+}
+
+function setPekerjaanBasedOnAge(pekerjaan, status_usia) {
+    if (status_usia == "BALITA") {
+        return "Belum/Tidak Bekerja";
+    } else if (status_usia == "SEKOLAH") {
+        return "Pelajar";
+    } else {
+        return pekerjaan;
+    }
 }
 
 function getPekerjaanLabel(pekerjaan) {
@@ -623,7 +633,8 @@ const X_PATH = {
         "//div[text()='Perempuan']/ancestor::div[contains(@class,'cursor-pointer')]",
     // SELECT_JK_PR:
     //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[5]/div/div[2]/div[3]/div/div[2]",
-    INPUT_WA: "//input[@name='Nomor Whatsapp']",
+    INPUT_WA:
+        "//label[contains(., 'No. Whatsapp Aktif')]//input[@name='Nomor Whatsapp']",
     // INPUT_WA:
     //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[5]/div[2]/div/div/div[4]/div/form/div[1]/div[1]/div[6]/div[1]/label/div[2]/input",
     INPUT_ALAMAT: "//textarea[@id='detail-domisili']",
@@ -710,8 +721,7 @@ const X_PATH = {
     //     "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[1]/div[2]/div[1]/div/div[3]/div/div[3]",
     SELECT_SEARCH_NIK:
         "//div[contains(@style, 'transform')]//div[text()='NIK']",
-    INPUT_SEARCH:
-        "//input[@id='nik' and @placeholder='Masukkan NIK']",
+    INPUT_SEARCH: "//input[@id='nik' and @placeholder='Masukkan NIK']",
     BTN_KONFIMASI_HADIR:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[3]/div[3]/div/div/table/tbody/tr/td[6]/div/div[1]/div/button",
     CHECKBOX_BERSEDIA_CKG:
@@ -744,6 +754,8 @@ const X_PATH = {
     BTN_MULAI_PELAYANAN:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[4]/div[3]/div/table/tbody/tr/td[9]/div/div/button",
     BTN_MULAI_PEMERIKSAAN: ".//button[normalize-space(.)='Mulai Pemeriksaan']",
+    BTN_MULAI_PEMERIKSAAN_SIMPAN: "//button//div[contains(text(), 'Simpan')]",
+    BTN_SELESAIKAN_LAYANAN: "//button[contains(., 'Selesaikan Layanan')]",
 
     BTN_INPUT_GIZI:
         "/html/body/div[1]/main/div/div[1]/section[2]/div/div/div/div[2]/div/div[5]/div[2]/div[3]/div/div/div/div[1]/div[4]/div/button",
@@ -787,7 +799,8 @@ const X_PATH = {
     INPUT_NAMA_LENGKAP_WALI: "//input[@name='Nama Lengkap Wali']",
     INPUT_JENIS_KELAMIN_WALI:
         "//span[contains(text(),'Pilih Jenis Kelamin')]/parent::div",
-    INPUT_WA_WALI: "//input[@name='Nomor whatsapp']",
+    INPUT_WA_WALI:
+        "//label[contains(., 'No. Whatsapp Wali')]//input[@name='Nomor whatsapp']",
     INPUT_TGL_LAHIR_WALI:
         "(//div[@id='Tanggal Lahir']//div[contains(@class,'mx-input-wrapper')])[2]",
     POPUP_DATA_PESERTA_WALI_TIDAK_VALID:

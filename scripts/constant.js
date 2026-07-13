@@ -5,7 +5,12 @@ const LOCAL_STORAGE = {
     DEFAULT_DATA_PEMERIKSAAN: "default-data-pemeriksaan",
     TGL_PEMERIKSAAN: "tgl-pemeriksaan",
 };
-const FrekuensiDuaMingguOptions = ["Tidak sama sekali", "Kurang dari 1 minggu", "Lebih dari 1 minggu", "Hampir setiap hari"]
+const FrekuensiDuaMingguOptions = [
+    "Tidak sama sekali",
+    "Kurang dari 1 minggu",
+    "Lebih dari 1 minggu",
+    "Hampir setiap hari",
+];
 const YaTidakOptions = ["Ya", "Tidak"];
 const DisabilitasOptions = ["Non disabilitas", "Penyandang disabilitas"];
 const PerkawinanOptions = [
@@ -190,7 +195,14 @@ const dataSchema = [
     {
         mainKey: "kab_kota",
         label: "Kabupaten / Kota",
-        keys: ["kab_kota", "kabupaten_kota", "kabupaten", "kota", "kab_atau_kota", "city"],
+        keys: [
+            "kab_kota",
+            "kabupaten_kota",
+            "kabupaten",
+            "kota",
+            "kab_atau_kota",
+            "city",
+        ],
         validation: { type: "text", maxLength: 100 },
     },
     {
@@ -301,13 +313,25 @@ const dataSchema = [
     {
         mainKey: "td_sistol",
         label: "Tekanan Darah Sistol",
-        keys: ["td_sistol", "tekanan_darah_sistol", "sistol", "sistole", "tensi_sistol"],
+        keys: [
+            "td_sistol",
+            "tekanan_darah_sistol",
+            "sistol",
+            "sistole",
+            "tensi_sistol",
+        ],
         validation: { type: "number", min: 50, max: 250 },
     },
     {
         mainKey: "td_diastol",
         label: "Tekanan Darah Diastol",
-        keys: ["td_diastol", "tekanan_darah_diastol", "diastol", "diastole", "tensi_diastol"],
+        keys: [
+            "td_diastol",
+            "tekanan_darah_diastol",
+            "diastol",
+            "diastole",
+            "tensi_diastol",
+        ],
         validation: { type: "number", min: 30, max: 150 },
     },
     {
@@ -325,19 +349,36 @@ const dataSchema = [
     {
         mainKey: "lingkar_perut",
         label: "Lingkar Perut (cm)",
-        keys: ["lingkar_perut", "lingkar_perut_cm", "lp", "waist_circumference"],
+        keys: [
+            "lingkar_perut",
+            "lingkar_perut_cm",
+            "lp",
+            "waist_circumference",
+        ],
         validation: { type: "number", min: 30, max: 200 },
     },
     {
         mainKey: "pemeriksaan_gula",
         label: "Pemeriksaan Gula Darah",
-        keys: ["pemeriksaan_gula", "pemeriksaan_gula_darah", "gula_darah", "gds", "gdp", "gula"],
+        keys: [
+            "pemeriksaan_gula",
+            "pemeriksaan_gula_darah",
+            "gula_darah",
+            "gds",
+            "gdp",
+            "gula",
+        ],
         validation: { type: "number", min: 10, max: 600 },
     },
     {
         mainKey: "darah_tinggi",
         label: "Riwayat Darah Tinggi",
-        keys: ["darah_tinggi", "riwayat_darah_tinggi", "hipertensi", "riwayat_hipertensi"],
+        keys: [
+            "darah_tinggi",
+            "riwayat_darah_tinggi",
+            "hipertensi",
+            "riwayat_hipertensi",
+        ],
         validation: {
             type: "enum",
             options: ["Ya", "Tidak", "Ya/Ada", "Tidak/Tidak Ada"],
@@ -389,7 +430,15 @@ const dataSchema = [
         keys: ["jenis_kelamin_wali"],
         validation: {
             type: "enum",
-            options: ["L", "P", "Laki-laki", "Perempuan", "male", "female", "-"],
+            options: [
+                "L",
+                "P",
+                "Laki-laki",
+                "Perempuan",
+                "male",
+                "female",
+                "-",
+            ],
             mapTo: {
                 l: "L",
                 "laki-laki": "L",
@@ -437,6 +486,15 @@ const dataSchema = [
         mainKey: "pemeriksaan",
         label: "Pemeriksaan",
         keys: ["periksa", "pemeriksaan"],
+        validation: {
+            type: "enum",
+            options: StatusOptions,
+        },
+    },
+    {
+        mainKey: "pemeriksaan_mandiri",
+        label: "Pemeriksaan Mandiri",
+        keys: ["pemeriksaan_mandiri"],
         validation: {
             type: "enum",
             options: StatusOptions,
@@ -581,19 +639,32 @@ function allowNextProcess(val = "") {
     }
 }
 
+// const defaultRunPemeriksaanMandiri = {
+//     demografiAnak: false,
+//     demografiDewasaLakiLaki: false,
+//     demografiDewasaPerempuan: false,
+//     demografiLansia: false,
+//     faktorRisikoKankerUsus: false,
+//     faktorRisikoTbDewasaLansia: false,
+//     hati: false,
+//     kesehatanJiwa: false,
+//     penapisanRisikoKankerParu: false,
+//     perilakuMerokok: false,
+//     tingkatAktivitasFisik: false,
+//     faktorRisikoGulaDarahAnak: false,
+//     riwayatImunisasiRutinBalita: false,
+//     riwayatImunisasiTetanusCatin: false,
+//     kankerLeherRahim: false,
+// };
 
 const defaultRunSettingData = {
     pendaftaran: true,
     kehadiran: true,
     rapor: false,
     pemeriksaan: {
-        demoDewasa: false,
-        faktorTb: false,
-        hati: false,
-        kesJiwa: false,
-        rokok: false,
-        aktivitasFisik: false
-    }
+        // ...defaultRunPemeriksaanMandiri,
+        mandiri: false,
+    },
 };
 
 function getRunSettingData() {
@@ -616,86 +687,87 @@ const MAIN_URL = {
     PENDAFTARAN:
         "https://sehatindonesiaku.kemkes.go.id/ckg-pendaftaran-individu",
     PELAYANAN: "https://sehatindonesiaku.kemkes.go.id/ckg-pelayanan",
+    PELAYANAN_DETAIL_PEMERIKSAAN: "https://sehatindonesiaku.kemkes.go.id/ckg-pelayanan/detail-pemeriksaan",
 };
 
 const pemeriksaanDataSchema = {
-    "demografiAnak": {
-        "key": "demografiAnak",
-        "label": "Demografi Anak",
-        "input": [
+    demografiAnak: {
+        key: "demografiAnak",
+        label: "Demografi Anak",
+        input: [
             {
                 key: "status_disabilitas",
                 label: "Apakah Anda penyandang disabilitas",
                 type: "enum",
                 required: true,
                 default: "Non disabilitas",
-                options: DisabilitasOptions
-            }
+                options: DisabilitasOptions,
+            },
         ],
     },
-    "demografiDewasaLakiLaki": {
-        "key": "demografiDewasaLakiLaki",
-        "label": "Demografi Dewasa Laki-Laki",
-        "input": [
-            {
-                "key": "status_perkawinan",
-                "label": "Status Perkawinan",
-                "type": "enum",
-                "required": true,
-                "default": "Belum Menikah",
-                "options": PerkawinanOptions
-            },
-            {
-                "key": "status_disabilitas",
-                "label": "Apakah Anda penyandang disabilitas?",
-                "type": "enum",
-                "required": true,
-                "default": "Non disabilitas",
-                "options": DisabilitasOptions
-            }
-        ]
-    },
-    "demografiDewasaPerempuan": {
-        "key": "demografiDewasaPerempuan",
-        "label": "Demografi Dewasa Perempuan",
-        "input": [
-            {
-                "key": "status_perkawinan",
-                "label": "Status Perkawinan",
-                "type": "enum",
-                "required": true,
-                "default": "Belum Menikah",
-                "options": PerkawinanOptions
-            },
-            {
-                "key": "status_hamil",
-                "label": "Apakah Anda sedang hamil?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            },
-            {
-                "key": "status_disabilitas",
-                "label": "Apakah Anda penyandang disabilitas?",
-                "type": "enum",
-                "required": true,
-                "default": "Non disabilitas",
-                "options": DisabilitasOptions
-            }
-        ]
-    },
-    "demografiLansia": {
-        "key": "demografiLansia",
-        "label": "Demografi Lansia",
-        "input": [
+    demografiDewasaLakiLaki: {
+        key: "demografiDewasaLakiLaki",
+        label: "Demografi Dewasa Laki-Laki",
+        input: [
             {
                 key: "status_perkawinan",
                 label: "Status Perkawinan",
                 type: "enum",
                 required: true,
                 default: "Belum Menikah",
-                options: PerkawinanOptions
+                options: PerkawinanOptions,
+            },
+            {
+                key: "status_disabilitas",
+                label: "Apakah Anda penyandang disabilitas?",
+                type: "enum",
+                required: true,
+                default: "Non disabilitas",
+                options: DisabilitasOptions,
+            },
+        ],
+    },
+    demografiDewasaPerempuan: {
+        key: "demografiDewasaPerempuan",
+        label: "Demografi Dewasa Perempuan",
+        input: [
+            {
+                key: "status_perkawinan",
+                label: "Status Perkawinan",
+                type: "enum",
+                required: true,
+                default: "Belum Menikah",
+                options: PerkawinanOptions,
+            },
+            {
+                key: "status_hamil",
+                label: "Apakah Anda sedang hamil?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+            {
+                key: "status_disabilitas",
+                label: "Apakah Anda penyandang disabilitas?",
+                type: "enum",
+                required: true,
+                default: "Non disabilitas",
+                options: DisabilitasOptions,
+            },
+        ],
+    },
+    demografiLansia: {
+        key: "demografiLansia",
+        label: "Demografi Lansia",
+        input: [
+            {
+                key: "status_perkawinan",
+                label: "Status Perkawinan",
+                type: "enum",
+                required: true,
+                default: "Belum Menikah",
+                options: PerkawinanOptions,
             },
             {
                 key: "status_disabilitas",
@@ -703,21 +775,21 @@ const pemeriksaanDataSchema = {
                 type: "enum",
                 required: true,
                 default: "Non disabilitas",
-                options: DisabilitasOptions
-            }
+                options: DisabilitasOptions,
+            },
         ],
     },
-    "faktorRisikoKankerUsus": {
-        "key": "faktorRisikoKankerUsus",
-        "label": "Faktor Risiko Kanker Usus",
-        "input": [
+    faktorRisikoKankerUsus: {
+        key: "faktorRisikoKankerUsus",
+        label: "Faktor Risiko Kanker Usus",
+        input: [
             {
                 key: "kanker_usus",
                 label: "Apakah ada anggota keluarga Anda, yang pernah dinyatakan menderita kanker kolorektal atau kanker usus?",
                 type: "enum",
                 required: true,
                 default: "Tidak",
-                options: YaTidakOptions
+                options: YaTidakOptions,
             },
             {
                 key: "status_merokok",
@@ -725,328 +797,340 @@ const pemeriksaanDataSchema = {
                 type: "enum",
                 required: true,
                 default: "Tidak",
-                options: YaTidakOptions
-            }
+                options: YaTidakOptions,
+            },
         ],
     },
-    "faktorRisikoTbDewasaLansia": {
-        "key": "faktorRisikoTbDewasaLansia",
-        "label": "Faktor Risiko TB - Dewasa & Lansia",
-        "input": [
+    faktorRisikoTbDewasaLansia: {
+        key: "faktorRisikoTbDewasaLansia",
+        label: "Faktor Risiko TB - Dewasa & Lansia",
+        input: [
             {
                 key: "status_batuk",
                 label: "Apakah Anda pernah atau sedang mengalami batuk yang tidak sembuh-sembuh?",
                 type: "enum",
                 required: true,
                 default: "Tidak batuk",
-                options: ["Ya, lebih dari 2 minggu", "Ya, kurang dari 2 minggu", "Tidak batuk"]
+                options: [
+                    "Ya, lebih dari 2 minggu",
+                    "Ya, kurang dari 2 minggu",
+                    "Tidak batuk",
+                ],
             },
         ],
     },
-    "hati": {
-        "key": "hati",
-        "label": "Hati",
-        "input": [
+    hati: {
+        key: "hati",
+        label: "Hati",
+        input: [
             {
-                "key": "tes_hepatitis_b_positif",
-                "label": "Apakah Anda pernah menjalani tes untuk Hepatitis B dan mendapatkan hasil positif?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "tes_hepatitis_b_positif",
+                label: "Apakah Anda pernah menjalani tes untuk Hepatitis B dan mendapatkan hasil positif?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "riwayat_keluarga_hepatitis_b",
-                "label": "Apakah Anda memiliki ibu kandung/saudara sekandung yang menderita Hepatitis B?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "riwayat_keluarga_hepatitis_b",
+                label: "Apakah Anda memiliki ibu kandung/saudara sekandung yang menderita Hepatitis B?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "seks_berisiko",
-                "label": "Apakah anda pernah berhubungan seksual berisiko/tanpa pengaman dengan bukan pasangan suami/istri?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "seks_berisiko",
+                label: "Apakah anda pernah berhubungan seksual berisiko/tanpa pengaman dengan bukan pasangan suami/istri?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "transfusi_darah",
-                "label": "Apakah Anda pernah menerima transfusi darah sebelumnya?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "transfusi_darah",
+                label: "Apakah Anda pernah menerima transfusi darah sebelumnya?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "cuci_darah_hemodialisis",
-                "label": "Apakah Anda pernah menjalani cuci darah atau hemodialisis?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "cuci_darah_hemodialisis",
+                label: "Apakah Anda pernah menjalani cuci darah atau hemodialisis?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "narkoba_suntik",
-                "label": "Apakah Anda pernah menggunakan narkoba, obat terlarang, atau bahan adiktif lainnya dengan cara disuntik?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "narkoba_suntik",
+                label: "Apakah Anda pernah menggunakan narkoba, obat terlarang, atau bahan adiktif lainnya dengan cara disuntik?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "status_odhiv",
-                "label": "Apakah Anda adalah orang dengan HIV (ODHIV)?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "status_odhiv",
+                label: "Apakah Anda adalah orang dengan HIV (ODHIV)?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "pengobatan_hepc_gagal",
-                "label": "Apakah Anda pernah mendapatkan pengobatan Hepatitis C dan tidak sembuh?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "pengobatan_hepc_gagal",
+                label: "Apakah Anda pernah mendapatkan pengobatan Hepatitis C dan tidak sembuh?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "diagnosa_kolesterol_tinggi",
-                "label": "Apakah Anda pernah didiagnosa atau mendapatkan hasil pemeriksaan kolesterol (lemak darah) tinggi?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
+                key: "diagnosa_kolesterol_tinggi",
+                label: "Apakah Anda pernah didiagnosa atau mendapatkan hasil pemeriksaan kolesterol (lemak darah) tinggi?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
     },
-    "kesehatanJiwa": {
-        "key": "kesehatanJiwa",
-        "label": "Kesehatan Jiwa",
-        "input": [
+    kesehatanJiwa: {
+        key: "kesehatanJiwa",
+        label: "Kesehatan Jiwa",
+        input: [
             {
-                "key": "kurang_bersemangat",
-                "label": "Dalam 2 minggu terakhir, seberapa sering anda kurang/ tidak bersemangat dalam melakukan kegiatan sehari-hari?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak sama sekali",
-                "options": FrekuensiDuaMingguOptions
+                key: "kurang_bersemangat",
+                label: "Dalam 2 minggu terakhir, seberapa sering anda kurang/ tidak bersemangat dalam melakukan kegiatan sehari-hari?",
+                type: "enum",
+                required: true,
+                default: "Tidak sama sekali",
+                options: FrekuensiDuaMingguOptions,
             },
             {
-                "key": "merasa_murung",
-                "label": "Dalam 2 minggu terakhir, seberapa sering anda merasa murung, tertekan, atau putus asa?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak sama sekali",
-                "options": FrekuensiDuaMingguOptions
+                key: "merasa_murung",
+                label: "Dalam 2 minggu terakhir, seberapa sering anda merasa murung, tertekan, atau putus asa?",
+                type: "enum",
+                required: true,
+                default: "Tidak sama sekali",
+                options: FrekuensiDuaMingguOptions,
             },
             {
-                "key": "merasa_cemas",
-                "label": "Dalam 2 minggu terakhir, seberapa sering anda merasa gugup, cemas, atau gelisah?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak sama sekali",
-                "options": FrekuensiDuaMingguOptions
+                key: "merasa_cemas",
+                label: "Dalam 2 minggu terakhir, seberapa sering anda merasa gugup, cemas, atau gelisah?",
+                type: "enum",
+                required: true,
+                default: "Tidak sama sekali",
+                options: FrekuensiDuaMingguOptions,
             },
             {
-                "key": "tidak_kendali_khawatir",
-                "label": "Dalam 2 minggu terakhir, seberapa sering anda tidak mampu mengendalikan rasa khawatir?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak sama sekali",
-                "options": FrekuensiDuaMingguOptions
-            }
-        ]
+                key: "tidak_kendali_khawatir",
+                label: "Dalam 2 minggu terakhir, seberapa sering anda tidak mampu mengendalikan rasa khawatir?",
+                type: "enum",
+                required: true,
+                default: "Tidak sama sekali",
+                options: FrekuensiDuaMingguOptions,
+            },
+        ],
     },
-    "penapisanRisikoKankerParu": {
-        "key": "penapisanRisikoKankerParu",
-        "label": "Penapisan Risiko Kanker Paru",
-        "input": [
+    penapisanRisikoKankerParu: {
+        key: "penapisanRisikoKankerParu",
+        label: "Penapisan Risiko Kanker Paru",
+        input: [
             {
-                "key": "merokok_setahun_terakhir",
-                "label": "Apakah Anda merokok dalam setahun terakhir ini?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "merokok_setahun_terakhir",
+                label: "Apakah Anda merokok dalam setahun terakhir ini?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "terpapar_asap_rokok_pasif",
-                "label": "Apakah Anda terpapar atau menghirup asap rokok dari orang lain di rumah, lingkungan atau tempat kerja dalam 1 bulan terakhir?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "terpapar_asap_rokok_pasif",
+                label: "Apakah Anda terpapar atau menghirup asap rokok dari orang lain di rumah, lingkungan atau tempat kerja dalam 1 bulan terakhir?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "riwayat_keluarga_kanker_paru",
-                "label": "Apakah memiliki riwayat kanker paru pada keluarga (ayah/ibu/saudara kandung)?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "riwayat_keluarga_kanker_paru",
+                label: "Apakah memiliki riwayat kanker paru pada keluarga (ayah/ibu/saudara kandung)?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "gejala_kanker_paru_kronis",
-                "label": "Apakah Anda sedang mengalami salah satu atau lebih gejala berikut dan telah diobati tetapi tidak sembuh-sembuh : batuk dalam jangka waktu yang lama / batuk berdarah/ sesak napas/ nyeri dada/ leher bengkak/ terdapat benjolan pada leher?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "gejala_kanker_paru_kronis",
+                label: "Apakah Anda sedang mengalami salah satu atau lebih gejala berikut dan telah diobati tetapi tidak sembuh-sembuh : batuk dalam jangka waktu yang lama / batuk berdarah/ sesak napas/ nyeri dada/ leher bengkak/ terdapat benjolan pada leher?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "riwayat_tbc_ppok",
-                "label": "Apakah Anda pernah memiliki riwayat penyakit TBC atau PPOK?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
+                key: "riwayat_tbc_ppok",
+                label: "Apakah Anda pernah memiliki riwayat penyakit TBC atau PPOK?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
     },
-    "perilakuMerokok": {
-        "key": "perilakuMerokok",
-        "label": "Perilaku Merokok",
-        "input": [
+    perilakuMerokok: {
+        key: "perilakuMerokok",
+        label: "Perilaku Merokok",
+        input: [
             {
-                "key": "merokok_setahun_terakhir",
-                "label": "Apakah Anda merokok dalam setahun terakhir ini?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "merokok_setahun_terakhir",
+                label: "Apakah Anda merokok dalam setahun terakhir ini?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "terpapar_asap_rokok_pasif",
-                "label": "Apakah Anda terpapar asap rokok atau menghirup asap rokok dari orang lain dalam sebulan terakhir?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
+                key: "merokok_sebelumnya",
+                label: "Apakah Anda pernah merokok sebelumnya?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+            {
+                key: "terpapar_asap_rokok_pasif",
+                label: "Apakah Anda terpapar asap rokok atau menghirup asap rokok dari orang lain dalam sebulan terakhir?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
     },
-    "tingkatAktivitasFisik": {
-        "key": "tingkatAktivitasFisik",
-        "label": "Tingkat Aktivitas Fisik (sedang dan berat)",
-        "input": [
+    tingkatAktivitasFisik: {
+        key: "tingkatAktivitasFisik",
+        label: "Tingkat Aktivitas Fisik (sedang dan berat)",
+        input: [
             {
-                "key": "aktivitas_sedang_domestik",
-                "label": "Apakah Anda melakukan aktivitas fisik sedang pada kegiatan rumah tangga/domestik seperti membersihkan rumah/lingkungan (menyapu, menata perabotan), mencuci baju manual, memasak, mengasuh anak, atau mengangkat beban dengan berat < 20 kg?",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "aktivitas_sedang_domestik",
+                label: "Apakah Anda melakukan aktivitas fisik sedang pada kegiatan rumah tangga/domestik seperti membersihkan rumah/lingkungan (menyapu, menata perabotan), mencuci baju manual, memasak, mengasuh anak, atau mengangkat beban dengan berat < 20 kg?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "aktivitas_sedang_kerja",
-                "label": "Apakah Anda melakukan aktivitas fisik sedang pada tempat kerja seperti pekerjaan dengan mengangkat beban, memberi makan ternak, berkebun dan membersihkan kendaraan (motor/mobil/perahu)?",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "aktivitas_sedang_kerja",
+                label: "Apakah Anda melakukan aktivitas fisik sedang pada tempat kerja seperti pekerjaan dengan mengangkat beban, memberi makan ternak, berkebun dan membersihkan kendaraan (motor/mobil/perahu)?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "aktivitas_sedang_perjalanan",
-                "label": "Apakah Anda melakukan aktivitas fisik sedang dalam perjalanan seperti berjalan kaki atau bersepeda ke ladang, sawah, pasar dan tempat kerja?",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "aktivitas_sedang_perjalanan",
+                label: "Apakah Anda melakukan aktivitas fisik sedang dalam perjalanan seperti berjalan kaki atau bersepeda ke ladang, sawah, pasar dan tempat kerja?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "olahraga_sedang",
-                "label": "Apakah Anda melakukan olahraga intensitas sedang seperti latihan beban < 20 kg, senam aerobic, yoga, bermain bola, bersepeda dan berenang (santai)?",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "olahraga_sedang",
+                label: "Apakah Anda melakukan olahraga intensitas sedang seperti latihan beban < 20 kg, senam aerobic, yoga, bermain bola, bersepeda dan berenang (santai)?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "aktivitas_berat_kerja",
-                "label": "Apakah Anda melakukan aktivitas fisik intensitas berat di tempat kerja seperti mengangkat/memikul beban berat ≥20 kg, mencangkul, menggali, memanen, memanjat pohon, menebang pohon, mengayuh becak, menarik jaring, mendorong atau menarik (mesin pemotong rumput/gerobak/perahu/kendaraan)?",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
+                key: "aktivitas_berat_kerja",
+                label: "Apakah Anda melakukan aktivitas fisik intensitas berat di tempat kerja seperti mengangkat/memikul beban berat ≥20 kg, mencangkul, menggali, memanen, memanjat pohon, menebang pohon, mengayuh becak, menarik jaring, mendorong atau menarik (mesin pemotong rumput/gerobak/perahu/kendaraan)?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
             },
             {
-                "key": "olahraga_berat",
-                "label": "Apakah Anda melakukan olahraga intensitas berat seperti bersepeda cepat (>16 km/jam), jalan cepat (>7 km/jam), lari, sepak bola, futsal, bulutangkis, tenis, basket dan lompat tali?",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
+                key: "olahraga_berat",
+                label: "Apakah Anda melakukan olahraga intensitas berat seperti bersepeda cepat (>16 km/jam), jalan cepat (>7 km/jam), lari, sepak bola, futsal, bulutangkis, tenis, basket dan lompat tali?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
     },
-    "faktorRisikoGulaDarahAnak": {
-        "key": "faktorRisikoGulaDarahAnak",
-        "label": "Faktor Risiko Gula Darah Anak",
-        "input": [
+    faktorRisikoGulaDarahAnak: {
+        key: "faktorRisikoGulaDarahAnak",
+        label: "Faktor Risiko Gula Darah Anak",
+        input: [
             {
-                "key": "riwayat_diabetes_anak",
-                "label": "Apakah Anak Anda pernah dinyatakan diabetes atau kencing manis oleh Dokter?",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
+                key: "riwayat_diabetes_anak",
+                label: "Apakah Anak Anda pernah dinyatakan diabetes atau kencing manis oleh Dokter?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
     },
-    "riwayatImunisasiRutinBalita": {
-        "key": "riwayatImunisasiRutinBalita",
-        "label": "Riwayat Imunisasi Rutin Balita",
-        "input": [
+    riwayatImunisasiRutinBalita: {
+        key: "riwayatImunisasiRutinBalita",
+        label: "Riwayat Imunisasi Rutin Balita",
+        input: [
             {
-                "key": "status_imunisasi",
-                "label": "Apakah anak pernah memperoleh imunisasi saat usia 0 sd 24 bulan",
-                "type": "enum-select",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
+                key: "status_imunisasi",
+                label: "Apakah anak pernah memperoleh imunisasi saat usia 0 sd 24 bulan",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
     },
-    "riwayatImunisasiTetanusCatin": {
-        "key": "riwayatImunisasiTetanusCatin",
-        "label": "Riwayat Imunisasi Tetanus(Status T) - Hanya untuk Catin",
-        "input": [
+    riwayatImunisasiTetanusCatin: {
+        key: "riwayatImunisasiTetanusCatin",
+        label: "Riwayat Imunisasi Tetanus(Status T) - Hanya untuk Catin",
+        input: [
             {
-                "key": "riwayat_imunisasi_tetanus",
-                "label": "Apakah anda pernah mendapatkan imunisasi tetanus minimal 2 kali? (imunisasi tetanus biasanya didapatkan pada vaksin DPT saat bayi, vaksin TT/Td saat usia sekolah dasar)",
-                "type": "enum-select",
-                "default": "Tidak tahu atau tidak ingat",
-                "options": [
+                key: "riwayat_imunisasi_tetanus",
+                label: "Apakah anda pernah mendapatkan imunisasi tetanus minimal 2 kali? (imunisasi tetanus biasanya didapatkan pada vaksin DPT saat bayi, vaksin TT/Td saat usia sekolah dasar)",
+                type: "enum-select",
+                default: "Tidak tahu atau tidak ingat",
+                options: [
                     "Pernah imunisasi tetanus minimal dua kali",
                     "Pernah imunisasi tetanus satu kali",
                     "Pernah imunisasi tetanus tetapi tidak ingat berapa kali",
-                    "Tidak tahu atau tidak ingat"
-                ]
-            }
-        ]
+                    "Tidak tahu atau tidak ingat",
+                ],
+            },
+        ],
     },
-    "kankerLeherRahim": {
-        "key": "kankerLeherRahim",
-        "label": "Kanker Leher Rahim",
-        "input": [
+    kankerLeherRahim: {
+        key: "kankerLeherRahim",
+        label: "Kanker Leher Rahim",
+        input: [
             {
-                "key": "pernah_hubungan_seksual",
-                "label": "Apakah pernah melakukan hubungan intim/seksual? *",
-                "type": "enum",
-                "required": true,
-                "default": "Tidak",
-                "options": YaTidakOptions
-            }
-        ]
-    }
-}
+                key: "pernah_hubungan_seksual",
+                label: "Apakah pernah melakukan hubungan intim/seksual? *",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+        ],
+    },
+};
 
 function generateInitialDefaultValuesPemeriksaan(schema) {
     const defaults = {};
-    Object.keys(schema).forEach(catKey => {
-        schema[catKey].input.forEach(inputItem => {
+    Object.keys(schema).forEach((catKey) => {
+        schema[catKey].input.forEach((inputItem) => {
             // Menyimpan dengan format susunan unik: kategori_inputKey
             const uniqueKey = `${catKey}_${inputItem.key}`;
             defaults[uniqueKey] = inputItem.default || "";
@@ -1055,10 +1139,14 @@ function generateInitialDefaultValuesPemeriksaan(schema) {
     return defaults;
 }
 
-const defaultPemeriksaanData = generateInitialDefaultValuesPemeriksaan(pemeriksaanDataSchema);
- 
+const defaultPemeriksaanData = generateInitialDefaultValuesPemeriksaan(
+    pemeriksaanDataSchema,
+);
+
 function getDefaultPemeriksaanData() {
-    const storedData = localStorage.getItem(LOCAL_STORAGE.DEFAULT_DATA_PEMERIKSAAN);
+    const storedData = localStorage.getItem(
+        LOCAL_STORAGE.DEFAULT_DATA_PEMERIKSAAN,
+    );
     if (storedData) {
         try {
             return JSON.parse(storedData);
@@ -1070,5 +1158,8 @@ function getDefaultPemeriksaanData() {
 }
 
 function saveDefaultPemeriksaanData(defVal) {
-    localStorage.setItem(LOCAL_STORAGE.DEFAULT_DATA_PEMERIKSAAN, JSON.stringify(defVal));
+    localStorage.setItem(
+        LOCAL_STORAGE.DEFAULT_DATA_PEMERIKSAAN,
+        JSON.stringify(defVal),
+    );
 }

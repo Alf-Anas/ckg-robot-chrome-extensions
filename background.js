@@ -3,3 +3,5 @@ chrome.runtime.onStartup.addListener(async () => {
         openPanelOnActionClick: true,
     });
 });
+
+importScripts("scripts/pemeriksaan-mandiri.background.js");

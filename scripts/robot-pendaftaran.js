@@ -117,8 +117,9 @@ async function runPendaftaranAutofill({
                                         await waitForElementAsync(
                                             X_PATH.INPUT_TGL_LAHIR_MONTH_TABLE,
                                         );
-                                    const xpath = `.//td[@data-month="${tglLahir.month - 1
-                                        }"]`;
+                                    const xpath = `.//td[@data-month="${
+                                        tglLahir.month - 1
+                                    }"]`;
                                     const monthEl = document.evaluate(
                                         xpath,
                                         monthTable,
@@ -216,7 +217,11 @@ async function runPendaftaranAutofill({
                                                 X_PATH.BTN_CEK_NIK_PENDAFTARAN,
                                             );
                                         clickElement(btnCek);
-                                        sleepUntilLoaded(750, "Proses pencarian data", 20)
+                                        sleepUntilLoaded(
+                                            750,
+                                            "Proses pencarian data",
+                                            20,
+                                        );
                                     },
                                 },
                                 {
@@ -342,7 +347,7 @@ async function runPendaftaranAutofill({
                                             inputElementValue(
                                                 inputNIKWali,
                                                 inData.nik_wali ||
-                                                defData.nik_wali,
+                                                    defData.nik_wali,
                                             );
 
                                             const inputNamaWali =
@@ -352,12 +357,12 @@ async function runPendaftaranAutofill({
                                             inputElementValue(
                                                 inputNamaWali,
                                                 inData.nama_wali ||
-                                                defData.nama_wali,
+                                                    defData.nama_wali,
                                             );
 
                                             await selectBirthYear(
                                                 inData.tgl_lahir_wali ||
-                                                defData.tgl_lahir_wali,
+                                                    defData.tgl_lahir_wali,
                                                 X_PATH.INPUT_TGL_LAHIR_WALI,
                                             );
 
@@ -370,7 +375,7 @@ async function runPendaftaranAutofill({
                                             const isPerempuan =
                                                 String(
                                                     inData.jenis_kelamin_wali ||
-                                                    defData.jenis_kelamin_wali,
+                                                        defData.jenis_kelamin_wali,
                                                 ).toLowerCase() === "p";
                                             const genderEl =
                                                 await waitForElementAsync(
@@ -605,7 +610,7 @@ async function runPendaftaranAutofill({
                                                     );
                                                 if (!inputPekerjaanParent)
                                                     return;
-                                                const xpath = `.//button[.//div[contains(normalize-space(text()), '${inData.pekerjaan}')]]`;
+                                                const xpath = `.//button[.//div[contains(normalize-space(text()), '${setPekerjaanBasedOnAge(inData.pekerjaan || defData.pekerjaan, inData.status_usia)}')]]`;
                                                 const pekerjaanEl =
                                                     document.evaluate(
                                                         xpath,
@@ -637,7 +642,7 @@ async function runPendaftaranAutofill({
                                                         await selectWithRetry(
                                                             X_PATH.INPUT_ALAMAT_DOMISILI_KEL_DESA_PARENT,
                                                             inData.kel_desa ||
-                                                            defData.kel_desa,
+                                                                defData.kel_desa,
                                                         );
                                                 }
                                                 async function getKecamatan() {
@@ -645,7 +650,7 @@ async function runPendaftaranAutofill({
                                                         await selectWithRetry(
                                                             X_PATH.INPUT_ALAMAT_DOMISILI_KECAMATAN_PARENT,
                                                             inData.kecamatan ||
-                                                            defData.kecamatan,
+                                                                defData.kecamatan,
                                                         );
                                                     if (success) {
                                                         await getKelDesa();
@@ -656,7 +661,7 @@ async function runPendaftaranAutofill({
                                                         await selectWithRetry(
                                                             X_PATH.INPUT_ALAMAT_DOMISILI_KAB_KOTA_PARENT,
                                                             inData.kab_kota ||
-                                                            defData.kab_kota,
+                                                                defData.kab_kota,
                                                         );
                                                     if (success) {
                                                         await getKecamatan();
@@ -667,7 +672,7 @@ async function runPendaftaranAutofill({
                                                         await selectWithRetry(
                                                             X_PATH.INPUT_ALAMAT_DOMISILI_PROVINSI_PARENT,
                                                             inData.provinsi ||
-                                                            defData.provinsi,
+                                                                defData.provinsi,
                                                         );
                                                     if (success) {
                                                         await getKabKota();

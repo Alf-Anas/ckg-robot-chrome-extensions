@@ -163,20 +163,45 @@ function tandaiStatus(no, key, status) {
 
 function initRunSetting() {
     const currentData = getRunSettingData();
-    document.querySelectorAll('.main-chk').forEach(input => {
-        const field = input.getAttribute('data-field');
+    document.querySelectorAll(".main-chk").forEach((input) => {
+        const field = input.getAttribute("data-field");
         input.checked = !!currentData[field];
     });
-    document.querySelectorAll('.sub-chk').forEach(input => {
-        const subField = input.getAttribute('data-subfield');
+    document.querySelectorAll(".sub-chk").forEach((input) => {
+        const subField = input.getAttribute("data-subfield");
         input.checked = !!currentData.pemeriksaan[subField];
     });
 
-    function updatePemeriksaanParentStatus() {
-        const parentInput = document.getElementById('chkPemeriksaan');
-        const subGroup = document.getElementById('subPemeriksaanGroup');
+    // const pemeriksaanContainer = document.getElementById(
+    //     "checkboxPemeriksaanContainer",
+    // );
+    // if (pemeriksaanContainer) {
+    //     Object.keys(pemeriksaanDataSchema).forEach((catKey) => {
+    //         const category = pemeriksaanDataSchema[catKey];
 
-        const hasActiveChild = Object.values(currentData.pemeriksaan).some(value => value === true);
+    //         const wrapper = document.createElement("div");
+    //         wrapper.className = "form-check form-switch";
+    //         const checkboxId = `chk_${catKey}`;
+    //         wrapper.innerHTML = `
+    //             <input class="form-check-input sub-chk"
+    //                    type="checkbox"
+    //                    id="${checkboxId}"
+    //                    data-subfield="${catKey}" />
+    //             <label class="form-check-label small" for="${checkboxId}">
+    //                 ${category.label}
+    //             </label>
+    //         `;
+    //         pemeriksaanContainer.appendChild(wrapper);
+    //     });
+    // }
+
+    function updatePemeriksaanParentStatus() {
+        const parentInput = document.getElementById("chkPemeriksaan");
+        const subGroup = document.getElementById("subPemeriksaanGroup");
+
+        const hasActiveChild = Object.values(currentData.pemeriksaan).some(
+            (value) => value === true,
+        );
         parentInput.checked = hasActiveChild;
         if (hasActiveChild) {
             subGroup.style.display = "block";
@@ -186,28 +211,28 @@ function initRunSetting() {
     }
     updatePemeriksaanParentStatus();
 
-    document.querySelectorAll('.main-chk').forEach(input => {
-        input.addEventListener('change', function () {
-            const field = this.getAttribute('data-field');
+    document.querySelectorAll(".main-chk").forEach((input) => {
+        input.addEventListener("change", function () {
+            const field = this.getAttribute("data-field");
             currentData[field] = this.checked;
             saveRunSettingData(currentData);
         });
     });
-    const parentInput = document.getElementById('chkPemeriksaan');
-    parentInput.addEventListener('change', function () {
+    const parentInput = document.getElementById("chkPemeriksaan");
+    parentInput.addEventListener("change", function () {
         const isChecked = this.checked;
-        Object.keys(currentData.pemeriksaan).forEach(key => {
+        Object.keys(currentData.pemeriksaan).forEach((key) => {
             currentData.pemeriksaan[key] = isChecked;
         });
-        document.querySelectorAll('.sub-chk').forEach(input => {
+        document.querySelectorAll(".sub-chk").forEach((input) => {
             input.checked = isChecked;
         });
         updatePemeriksaanParentStatus();
         saveRunSettingData(currentData);
     });
-    document.querySelectorAll('.sub-chk').forEach(input => {
-        input.addEventListener('change', function () {
-            const subField = this.getAttribute('data-subfield');
+    document.querySelectorAll(".sub-chk").forEach((input) => {
+        input.addEventListener("change", function () {
+            const subField = this.getAttribute("data-subfield");
             currentData.pemeriksaan[subField] = this.checked;
 
             updatePemeriksaanParentStatus();
@@ -240,7 +265,12 @@ async function runOneByOne(no, key) {
 function runProcess() {
     const runSetData = getRunSettingData();
 
-    if (!runSetData.pendaftaran && !runSetData.kehadiran && !runSetData.rapor) {
+    if (
+        !runSetData.pendaftaran &&
+        !runSetData.kehadiran &&
+        !runSetData.pemeriksaan &&
+        !runSetData.rapor
+    ) {
         Swal.fire({
             title: "Info",
             text: "Silakan pilih minimal satu modul untuk dijalankan.",
@@ -254,9 +284,6 @@ function runProcess() {
 async function executeOtomasiProses(config) {
     showPanelMessage(`Persiapan pengisian data!`);
     showLoading();
-
-    console.log(config)
-    return
 
     const defData = getDefaultData();
     const listData = getAktifData();
@@ -280,10 +307,17 @@ async function executeOtomasiProses(config) {
         if (config.pemeriksaan) {
             if (
                 allowNextProcess(iData.pendaftaran) &&
-                allowNextProcess(iData.kehadiran) &&
-                !skipStatus(iData.pemeriksaan)
+                allowNextProcess(iData.kehadiran)
             ) {
-                await runPemeriksaan(iData, defData);
+                iData = await runPemeriksaan(iData, defData);
+            }
+        }
+        if (config.pemeriksaan?.mandiri) {
+            if (
+                allowNextProcess(iData.pemeriksaan) &&
+                !skipStatus(iData.pemeriksaan.mandiri)
+            ) {
+                iData = await runPemeriksaanMandiri(iData, defData, pemeriksaanDataSchema);
             }
         }
         listData[i] = iData;

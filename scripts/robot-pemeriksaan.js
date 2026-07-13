@@ -1,19 +1,19 @@
-async function runKehadiran(iData, defData) {
+async function runPemeriksaan(iData, defData) {
     showPanelMessage(
-        `Konfirmasi Kehadiran untuk ${iData.no}-${iData.nik}-${iData.nama}`,
+        `Mulai Pemeriksaan untuk ${iData.no}-${iData.nik}-${iData.nama}`,
     );
     const tgl_pemeriksaan = localStorage.getItem(LOCAL_STORAGE.TGL_PEMERIKSAAN);
-    const result = await runKehadiranAutofill({
+    const result = await runPemeriksaanAutofill({
         aktifData: iData,
         defData,
-        url: MAIN_URL.PENDAFTARAN,
+        url: MAIN_URL.PELAYANAN,
         tgl_pemeriksaan,
     });
     appendPanelMessage(
-        `Konfirmasi Kehadiran selesai. Status: ${result.status} - ${result.message}`,
+        `Konfirmasi Mulai Pemeriksaan. Status: ${result.status} - ${result.message}`,
     );
     if (result.success) {
-        iData.kehadiran = "OK";
+        iData.pemeriksaan = "OK";
         iData.status_input = result.status;
         iData.keterangan = result.message;
     } else {
@@ -22,7 +22,7 @@ async function runKehadiran(iData, defData) {
         } else if (result.status == "TIMEOUT") {
             iData.keterangan = result.message;
         } else {
-            iData.kehadiran = "GAGAL";
+            iData.pemeriksaan = "GAGAL";
             iData.status_input = result.status;
             iData.keterangan = result.message;
         }
@@ -31,7 +31,7 @@ async function runKehadiran(iData, defData) {
     return iData;
 }
 
-async function runKehadiranAutofill({
+async function runPemeriksaanAutofill({
     aktifData,
     defData,
     url,
@@ -79,9 +79,7 @@ async function runKehadiranAutofill({
                                 }
                             };
 
-                            logStatus(
-                                "Data diterima, mulai proses konfirmasi kehadiran...",
-                            );
+                            logStatus("Data diterima, mulai pemeriksaan...");
 
                             // Define the persistent state that steps can mutate or read from
                             const state = {
@@ -92,136 +90,127 @@ async function runKehadiranAutofill({
                                 {
                                     name: "Select Search by NIK",
                                     action: async () => {
-                                        logStatus(
-                                            "1. Memilih seleksi pencarian...",
-                                        );
-                                        const selectSearch = await waitForElementAsync(
-                                            X_PATH.SELECT_SEARCH,
-                                        );
+                                        logStatus("1. Pencarian by NIK...");
+                                        const selectSearch =
+                                            await waitForElementAsync(
+                                                X_PATH.SELECT_SEARCH_PELAYANAN,
+                                            );
                                         clickElement(selectSearch);
-                                        const selectSearchNIK = await waitForElementAsync(
-                                            X_PATH.SELECT_SEARCH_NIK,
-                                        );
-                                        clickElement(selectSearchNIK);
+                                        const selectSearchNik =
+                                            await waitForElementAsync(
+                                                X_PATH.SELECT_SEARCH_NIK_PELAYANAN,
+                                            );
+                                        clickElement(selectSearchNik);
                                         await sleep(750);
+
+                                        const inputSearchNik =
+                                            await waitForElementAsync(
+                                                X_PATH.INPUT_SEARCH_NIK_PELAYANAN,
+                                            );
+                                        forceInput(
+                                            inputSearchNik,
+                                            String(inData.nik),
+                                        );
+                                        await sleep(500);
+                                        enterKeyElement(inputSearchNik);
+                                        await sleepUntilLoaded();
                                     },
                                 },
                                 {
-                                    name: "Search by NIK",
+                                    name: "Check which tab table",
                                     action: async () => {
                                         logStatus(
-                                            "2. Mencari berdasarkan NIK...",
+                                            "2. Mencari berdasarkan tab table...",
                                         );
-                                        const inputSearchNIK = await waitForElementAsync(
-                                            X_PATH.INPUT_SEARCH,
-                                        );
-                                        inputSearchNIK.focus();
-                                        await sleep(100);
-                                        inputElementValue(inputSearchNIK, inData.nik);
-                                        clickElement(inputSearchNIK);
-                                        inputSearchNIK.focus();
-                                        await sleep(100);
-                                        enterKeyElement(inputSearchNIK);
-                                        await sleep(750);
+
+                                        async function checkWhichTableExist() {
+                                            const belum = document.evaluate(
+                                                "//div[contains(text(),'Belum Pemeriksaan')]//span",
+                                                document,
+                                                null,
+                                                XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                                null,
+                                            ).singleNodeValue;
+
+                                            const count = belum
+                                                ? parseInt(
+                                                      belum.textContent.trim(),
+                                                  )
+                                                : null;
+                                            if (count === 0) {
+                                                // go to parent tab div
+                                                const belumTab =
+                                                    belum.closest(
+                                                        "div.cursor-pointer",
+                                                    );
+
+                                                // next tab = Sedang Pemeriksaan
+                                                const sedang =
+                                                    belumTab?.nextElementSibling;
+                                                if (sedang) {
+                                                    clickElement(sedang);
+                                                }
+                                            }
+                                        }
+                                        await checkWhichTableExist();
                                     },
                                 },
                                 {
-                                    name: "Konfirmasi hadir",
+                                    name: "Start Pemeriksaan",
                                     action: async () => {
-                                        logStatus(
-                                            "3. Klik konfirmasi hadir...",
-                                        );
-                                        const namaTarget = inData.nama.toLowerCase();
-                                        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                                        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-                                        const xpathKonfirm = `//tr[contains(translate(., '${uppercase}', '${lowercase}'), '${namaTarget}')]//button[contains(., 'Konfirmasi Hadir')]`;
-                                        const xpathSudahHadir = `//tr[contains(translate(., '${uppercase}', '${lowercase}'), '${namaTarget}')]//div[contains(., 'Sudah Hadir')]`;
+                                        logStatus("3. Memulai pemeriksaan...");
+                                        const btnMulai =
+                                            await waitForElementAsync(
+                                                X_PATH.BTN_MULAI_PEMERIKSAAN_TABLE,
+                                            );
+                                        clickElement(btnMulai);
 
-                                        const checkBtnKonfirmHadir =
-                                            waitForElementAsync(
-                                                xpathKonfirm,
-                                            ).then(() => "CONFIRM_HADIR");
-                                        const checkSudahHadir = waitForElementAsync(
-                                            xpathSudahHadir,
-                                        ).then(() => "SUDAH_HADIR");
-
+                                        await sleepUntilLoaded();
                                         try {
-                                            const status = await Promise.race([
-                                                checkBtnKonfirmHadir,
-                                                checkSudahHadir,
-                                            ]);
-                                            if (status === "CONFIRM_HADIR") {
+                                            const btnSelesaikanExist =
+                                                document.evaluate(
+                                                    X_PATH.BTN_SELESAIKAN_LAYANAN,
+                                                    document,
+                                                    null,
+                                                    XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                                    null,
+                                                ).singleNodeValue;
+
+                                            if (btnSelesaikanExist) {
                                                 logStatus(
-                                                    "3. NIK Belum Terdaftar!",
+                                                    "4. Pemeriksaan telah dimulai...",
                                                 );
-                                                const btnKonfirmHadir = await
-                                                    waitForElementAsync(
-                                                        xpathKonfirm,
-                                                    )
-                                                clickElement(btnKonfirmHadir);
-                                                sleepUntilLoaded(750, "Proses pencarian data", 20)
-                                            } else if (status === "SUDAH_HADIR") {
+                                            } else {
                                                 logStatus(
-                                                    "4. Sudah terkonfirmasi hadir!",
+                                                    "4. Memulai pemeriksaan CKG...",
                                                 );
-                                                state.earlyExit = {
-                                                    success: true,
-                                                    status: "-- ON PROGRESS --",
-                                                    message: "Berhasil Konfirmasi Kehadiran",
-                                                };
+                                                const btnMulaiPemeriksaan =
+                                                    await waitForElementAsync(
+                                                        X_PATH.BTN_MULAI_PEMERIKSAAN,
+                                                    );
+                                                clickElement(
+                                                    btnMulaiPemeriksaan,
+                                                );
+                                                const btnMulaiPemeriksaanSimpan =
+                                                    await waitForElementAsync(
+                                                        X_PATH.BTN_MULAI_PEMERIKSAAN_SIMPAN,
+                                                    );
+                                                clickElement(
+                                                    btnMulaiPemeriksaanSimpan,
+                                                );
+                                                await waitForElementAsync(
+                                                    X_PATH.BTN_SELESAIKAN_LAYANAN,
+                                                );
                                             }
                                         } catch (err) {
                                             logStatus(
-                                                "4. Timeout: Konfirmasi kehadiran tidak ditemukan!",
-                                            );
-                                            console.log(err)
-                                            state.earlyExit = {
-                                                success: false,
-                                                status: "TIMEOUT",
-                                                message:
-                                                    "System timeout waiting for Konfirmasi kehadiran response",
-                                            };
-                                        }
-                                    },
-                                },
-                                {
-                                    name: "Bersedia CKG",
-                                    action: async () => {
-                                        logStatus(
-                                            "4. Bersedia di CKG...",
-                                        );
-                                        const checkboxBersediaCKG =
-                                            await waitForElementAsync(
-                                                X_PATH.CHECKBOX_BERSEDIA_CKG,
-                                            );
-                                        clickElement(checkboxBersediaCKG);
-                                        await sleep(500);
-                                        const btnHadirOK = await waitForElementAsync(
-                                            X_PATH.BTN_HADIR_CKG,
-                                        );
-                                        clickElement(btnHadirOK);
-                                        sleepUntilLoaded(750, "Memproses data", 20)
-                                    },
-                                },
-                                {
-                                    name: "Popup Success",
-                                    action: async () => {
-                                        logStatus(
-                                            "5. Berhasil Hadir...",
-                                        );
-                                        try {
-                                            await waitForElementAsync(
-                                                X_PATH.MSG_POPUP_BERHASIL_HADIR,
-                                            );
-                                        } catch (err) {
-                                            logStatus(
-                                                "5. Timeout: Konfirmasi hadir!",
+                                                "4. Timeout: Button Selesaikan Layanan tidak ditemukan!",
                                             );
                                             state.earlyExit = {
                                                 success: false,
                                                 status: "TIMEOUT",
                                                 message:
-                                                    "System timeout waiting for Konfirmasi hadir response",
+                                                    "System timeout waiting for Button Selesaikan Layanan response",
                                             };
                                         }
                                     },
@@ -257,7 +246,7 @@ async function runKehadiranAutofill({
                             return {
                                 success: true,
                                 status: "-- ON PROGRESS --",
-                                message: "Berhasil Konfirmasi Kehadiran",
+                                message: "Berhasil Memulai Pemeriksaan",
                             };
                         },
                     },
