@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>CKG Robot Data Preparations</title>
+    <link href="lib/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap.bundle.min.js"></script>
+    <script src="lib/sweetalert2.js"></script>
+    <script src="lib/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="p-3 position-relative">
+    <div class="d-flex justify-content-between">
+        <h3 class="text-primary">🤖 CKG Robot Data Preparations</h3>
+
+        <div style="text-align: center">
+            <a href="https://trakteer.id/alf-anas" target="_blank" style="display: inline-block; margin-bottom: 5px">
+                <img src="https://cdn.trakteer.id/images/embed/trbtn-red-1.png" alt="Trakteer Saya"
+                    style="max-height: 50px; max-width: 181px" loading="lazy" />
+            </a>
+            <div style="font-size: 13px; color: #555">
+                Created by <strong>Alf-Anas</strong> |
+                <a href="https://geoit.dev" target="_blank" style="color: #007bff; text-decoration: none">geoit.dev</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3 mt-1">
+        <div class="card-header bg-dark text-white">
+            1. Upload & Petakan Kolom Excel
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="excelFileInput" class="form-label font-weight-bold">Pilih File Excel (.xlsx / .xls)</label>
+                <input class="form-control" type="file" id="excelFileInput" accept=".xlsx, .xls" />
+            </div>
+
+            <div id="mappingSection" class="d-none">
+                <h6 class="text-secondary border-bottom pb-2">
+                    Sesuaikan Pemetaan Kolom jika Belum Sesuai:
+                </h6>
+                <div id="mappingDropdownsContainer" class="d-flex flex-nowrap overflow-auto pb-2 mb-3">
+                    <!-- Dropdown select akan digenerate otomatis lewat JS di sini -->
+                </div>
+                <div class="w-100 text-center">
+                    <button id="processAndSaveBtn" class="btn btn-primary w-100 font-weight-bold mx-auto"
+                        style="max-width: 400px">
+                        🚀 Gunakan & Simpan Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3 mt-1">
+        <div class="card-header bg-dark text-white">2. Data Default</div>
+        <div class="card-body">
+            <small>
+                Data default akan digunakan ketika data di excel kosong!
+            </small>
+            <div id="defaultValuesContainer" class="d-flex flex-nowrap overflow-auto pb-2 mb-3">
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="no_hp" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default No. HP">Default No. HP</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                62
+                            </span>
+                            <input type="number" id="no_hp" class="form-control" placeholder="8123..." />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="alamat" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Alamat">Default Alamat</label>
+                        <input type="text" id="alamat" class="form-control form-control-sm"
+                            placeholder="Nama jalan, RT/RW" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="provinsi" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Provinsi">Default Provinsi</label>
+                        <input type="text" id="provinsi" class="form-control form-control-sm" placeholder="Provinsi" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="kab_kota" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Kabupaten / Kota">Default Kabupaten / Kota</label>
+                        <input type="text" id="kab_kota" class="form-control form-control-sm"
+                            placeholder="Kab / Kota" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="kecamatan" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Kecamatan">Default Kecamatan</label>
+                        <input type="text" id="kecamatan" class="form-control form-control-sm"
+                            placeholder="Kecamatan" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="kel_desa" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Kelurahan / Desa">Default Kelurahan / Desa</label>
+                        <input type="text" id="kel_desa" class="form-control form-control-sm"
+                            placeholder="Kel / Desa" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="pekerjaan" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Pekerjaan">Default Pekerjaan</label>
+                        <select id="pekerjaan" class="form-select form-select-sm">
+                            <option value="">-- Pilih Pekerjaan --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="status_perkawinan" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Status Perkawinan">Default Status Perkawinan</label>
+                        <select id="status_perkawinan" class="form-select form-select-sm">
+                            <option value="">-- Pilih Status Perkawinan --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="status_disabilitas" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Status Disabilitas">Default Status Disabilitas</label>
+                        <select id="status_disabilitas" class="form-select form-select-sm">
+                            <option value="">-- Pilih Status Disabilitas --</option>
+                            <option value="YA">YA</option>
+                            <option value="TIDAK">TIDAK</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="berat_badan" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Berat Badan (kg)">Default Berat Badan (kg)</label>
+                        <input type="number" id="berat_badan" class="form-control form-control-sm" placeholder="0" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="tinggi_badan" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Tinggi Badan (cm)">Default Tinggi Badan (cm)</label>
+                        <input type="number" id="tinggi_badan" class="form-control form-control-sm" placeholder="0" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="lingkar_perut" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Lingkar Perut (cm)">Default Lingkar Perut (cm)</label>
+                        <input type="number" id="lingkar_perut" class="form-control form-control-sm" placeholder="0" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="td_sistol" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Sistolik">Default TD Sistolik (mmHg)</label>
+                        <input type="number" id="td_sistol" class="form-control form-control-sm" placeholder="0" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="td_diastol" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Diastol">Default TD Diastol (mmHg)</label>
+                        <input type="number" id="td_diastol" class="form-control form-control-sm" placeholder="0" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="pemeriksaan_gula" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Gula Darah Sewaktu (GDS)">Default Gula Darah Sewaktu (GDS) -
+                            (mg/dL)</label>
+                        <input type="number" id="pemeriksaan_gula" class="form-control form-control-sm"
+                            placeholder="0" />
+                    </div>
+                </div>
+
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="nik_wali" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default NIK Wali">Default NIK Wali</label>
+                        <input type="text" id="nik_wali" class="form-control form-control-sm" placeholder="NIK Wali" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="nama_wali" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Nama Wali">Default Nama Wali</label>
+                        <input type="text" id="nama_wali" class="form-control form-control-sm"
+                            placeholder="Nama Wali" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="tgl_lahir_wali" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Tgl. Lahir Wali">Default Tgl. Lahir Wali</label>
+                        <input type="text" id="tgl_lahir_wali" class="form-control form-control-sm"
+                            placeholder="DD-MM-YYYY" />
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="jenis_kelamin_wali" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default Jenis Kelamin Wali">Default Jenis Kelamin Wali</label>
+                        <select id="jenis_kelamin_wali" class="form-select form-select-sm">
+                            <option value="">
+                                -- Pilih Jenis Kelamin --
+                            </option>
+                            <option value="L">Laki-laki (L)</option>
+                            <option value="P">Perempuan (P)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 me-2" style="width: 220px">
+                    <div class="form-group p-1 border rounded bg-light h-100">
+                        <label for="no_hp_wali" class="form-label small text-truncate fw-bold mb-1 d-block"
+                            title="Default No. HP Wali">Default No. HP Wali</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                62
+                            </span>
+                            <input type="number" id="no_hp_wali" class="form-control" placeholder="8...." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-100 text-center">
+                <button id="btnSaveDefault" class="btn btn-primary btn-sm w-100 font-weight-bold mx-auto"
+                    style="max-width: 400px">
+                    Simpan Data Default
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-3 mt-1">
+        <div class="card-header bg-dark text-white">3. Data Default Pemeriksaan</div>
+        <div class="card-body">
+            <div id="defaultValuesPemeriksaanContainer" class="d-flex flex-nowrap overflow-auto pb-2 mb-3"
+                style="gap: 4px;">
+                <!-- Element dinamis di-inject di sini melalui JS -->
+            </div>
+
+            <div class="w-100 text-center">
+                <button id="btnSaveDefaultPemeriksaan" class="btn btn-primary btn-sm w-100 font-weight-bold mx-auto"
+                    style="max-width: 400px">
+                    Simpan Data Default Pemeriksaan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <h5 class="text-success mb-0">Aktif Data</h5>
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" id="toggleDefaultData" checked />
+            <label class="form-check-label small fw-bold text-secondary" for="toggleDefaultData">Tampilkan Data
+                Default</label>
+        </div>
+    </div>
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto">
+        <table class="table table-bordered table-striped table-sm table-compact text-nowrap">
+            <thead class="table-dark">
+                <tr id="tableHeaderRow">
+                    <!-- Header akan dirender dinamis berdasarkan dataSchema -->
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                <tr>
+                    <td colspan="12" class="text-center text-muted">
+                        Belum ada data aktif. Silakan unggah file Excel.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr />
+
+    <div class="d-flex gap-2 mb-2">
+        <button id="btnDownloadExcel" class="btn btn-success w-75">
+            Download File Excel
+        </button>
+        <button id="btnClearAktifData" class="btn btn-danger w-25">
+            Hapus Data
+        </button>
+    </div>
+
+    <script src="scripts/constant.js"></script>
+    <script src="scripts/helper.js"></script>
+    <script src="scripts/data-preparation.js"></script>
+</body>
+
+</html>
