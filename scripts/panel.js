@@ -89,6 +89,7 @@ function loadDataTable() {
                     <td>${item.pendaftaran}</td>  
                     <td>${item.kehadiran}</td>  
                     <td>${item.pemeriksaan}</td>  
+                    <td>${item.pemeriksaan_mandiri}</td>  
                     <td>${item.rapor}</td>   
                     <td>${item.keterangan}</td>  
                 `;
@@ -315,7 +316,7 @@ async function executeOtomasiProses(config) {
         if (config.pemeriksaan?.mandiri) {
             if (
                 allowNextProcess(iData.pemeriksaan) &&
-                !skipStatus(iData.pemeriksaan.mandiri)
+                !skipStatus(iData.pemeriksaan_mandiri)
             ) {
                 iData = await runPemeriksaanMandiri(iData, defData, pemeriksaanDataSchema);
             }
