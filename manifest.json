@@ -21,7 +21,10 @@
 
   "permissions": ["storage", "scripting", "activeTab", "tabs", "sidePanel"],
 
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "https://sehatindonesiaku.kemkes.go.id/*",
+    "https://form.kemkes.go.id/*"
+  ],
 
   "background": {
     "service_worker": "background.js"
@@ -29,7 +32,10 @@
 
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://sehatindonesiaku.kemkes.go.id/*",
+        "https://form.kemkes.go.id/*"
+      ],
       "js": ["helper.js"]
     }
   ]
