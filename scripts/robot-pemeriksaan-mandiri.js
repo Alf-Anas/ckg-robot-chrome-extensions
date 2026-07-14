@@ -88,18 +88,28 @@ async function runPemeriksaanMandiriAutofill({
                     backgroundMessageListener,
                 );
                 async function waitForTab(tabId) {
+                    const tab = await chrome.tabs.get(tabId);
+                    if (
+                        tab.status === "complete" &&
+                        tab.url?.includes("pelayanan/detail")
+                    ) {
+                        return;
+                    }
                     return new Promise((resolve) => {
-                        function listener(updatedTabId, changeInfo, tab) {
+                        function listener(
+                            updatedTabId,
+                            changeInfo,
+                            updatedTab,
+                        ) {
                             if (
                                 updatedTabId === tabId &&
                                 changeInfo.status === "complete" &&
-                                tab.url?.includes("pelayanan/detail")
+                                updatedTab.url?.includes("pelayanan/detail")
                             ) {
                                 chrome.tabs.onUpdated.removeListener(listener);
                                 resolve();
                             }
                         }
-
                         chrome.tabs.onUpdated.addListener(listener);
                     });
                 }
