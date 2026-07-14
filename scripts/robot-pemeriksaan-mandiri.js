@@ -74,7 +74,11 @@ async function runPemeriksaanMandiriAutofill({
     );
 
     return new Promise((resolve) => {
-        function backgroundMessageListener(request, sender, sendResponse) {
+        async function backgroundMessageListener(
+            request,
+            sender,
+            sendResponse,
+        ) {
             if (request.type === "ROBOT_STATUS") {
                 appendPanelMessage(request.message);
             }
@@ -83,12 +87,66 @@ async function runPemeriksaanMandiriAutofill({
                 chrome.runtime.onMessage.removeListener(
                     backgroundMessageListener,
                 );
-                resolve({
-                    success: true,
-                    status: "OK",
-                    message:
-                        "Semua formulir mandiri yang tersedia berhasil di-autofill secara otomatis.",
+                async function waitForTab(tabId) {
+                    return new Promise((resolve) => {
+                        function listener(updatedTabId, changeInfo, tab) {
+                            if (
+                                updatedTabId === tabId &&
+                                changeInfo.status === "complete" &&
+                                tab.url?.includes("pelayanan/detail")
+                            ) {
+                                chrome.tabs.onUpdated.removeListener(listener);
+                                resolve();
+                            }
+                        }
+
+                        chrome.tabs.onUpdated.addListener(listener);
+                    });
+                }
+
+                await waitForTab(targetTabId);
+                const [{ result }] = await chrome.scripting.executeScript({
+                    target: { tabId: targetTabId },
+                    func: async () => {
+                        await new Promise((r) => setTimeout(r, 2000));
+                        const rows = document.querySelectorAll(
+                            ".table-pemeriksaan-mandiri table tbody tr",
+                        );
+                        let allComplete = true;
+                        rows.forEach((row) => {
+                            const cells = row.querySelectorAll("td");
+                            if (cells.length < 3) return;
+                            const statusImg = cells[1].querySelector("img");
+                            if (statusImg) {
+                                const imgSrc =
+                                    statusImg.getAttribute("src") || "";
+                                if (
+                                    imgSrc.includes("icon-success.svg") &&
+                                    !imgSrc.includes("icon-success-gray.svg")
+                                ) {
+                                    return;
+                                }
+                            }
+                            allComplete = false;
+                        });
+
+                        if (allComplete) {
+                            return {
+                                success: true,
+                                status: "-- ON PROGRESS --",
+                                message:
+                                    "Semua formulir mandiri yang tersedia berhasil di-autofill secara otomatis.",
+                            };
+                        } else {
+                            return {
+                                success: false,
+                                status: "ERROR",
+                                message: "Masih ada data yang belum terisi!",
+                            };
+                        }
+                    },
                 });
+                resolve(result);
             }
         }
         chrome.runtime.onMessage.addListener(backgroundMessageListener);
@@ -106,11 +164,14 @@ async function runPemeriksaanMandiriAutofill({
                 rows.forEach((row) => {
                     const cells = row.querySelectorAll("td");
                     if (cells.length < 3) return;
- 
+
                     const statusImg = cells[1].querySelector("img");
                     if (statusImg) {
-                        const imgSrc = statusImg.getAttribute("src") || ""; 
-                        if (imgSrc.includes("icon-success.svg") && !imgSrc.includes("icon-success-gray.svg")) {
+                        const imgSrc = statusImg.getAttribute("src") || "";
+                        if (
+                            imgSrc.includes("icon-success.svg") &&
+                            !imgSrc.includes("icon-success-gray.svg")
+                        ) {
                             return;
                         }
                     }

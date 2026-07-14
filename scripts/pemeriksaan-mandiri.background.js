@@ -151,7 +151,7 @@ async function runDynamicAutofillForm(
     async function fillQuestion() {
         // 2. Iterasi setiap field input yang ada di dalam skema
         for (const field of sectionSchema.input) {
-            const defKey = sectionSchema.key + "_" + field.key
+            const defKey = sectionSchema.key + "_" + field.key;
             const valueToFill = defData[defKey] || field.default;
 
             if (valueToFill === undefined || valueToFill === null) return;
@@ -186,21 +186,32 @@ async function runDynamicAutofillForm(
             if (targetQuestionEl) {
                 let optionFound = false;
                 if (field.type === "enum-select") {
-                    const dropdownEl = targetQuestionEl.querySelector(".sd-dropdown");
+                    const dropdownEl =
+                        targetQuestionEl.querySelector(".sd-dropdown");
 
                     if (dropdownEl) {
-                        dropdownEl.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+                        dropdownEl.dispatchEvent(
+                            new MouseEvent("mousedown", { bubbles: true }),
+                        );
                         dropdownEl.click();
-                        await new Promise((resolve) => setTimeout(resolve, 200));
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 200),
+                        );
 
                         const normalizedSchemaText = valueToFill
                             .replace(/\s+/g, " ")
                             .trim()
                             .toLowerCase();
-                        const listContainer = targetQuestionEl.querySelector(".sv-list__container") || document.body.querySelector(".sv-list__container");
+                        const listContainer =
+                            targetQuestionEl.querySelector(
+                                ".sv-list__container",
+                            ) ||
+                            document.body.querySelector(".sv-list__container");
 
                         if (listContainer) {
-                            const items = listContainer.querySelectorAll(".sv-list__item, [role='option'], .sd-list__item");
+                            const items = listContainer.querySelectorAll(
+                                ".sv-list__item, [role='option'], .sd-list__item",
+                            );
 
                             let optionFound = false;
 
@@ -210,13 +221,23 @@ async function runDynamicAutofillForm(
                                     .trim()
                                     .toLowerCase();
 
-                                if (normalizedItemText === normalizedSchemaText || normalizedItemText.includes(normalizedSchemaText)) {
+                                if (
+                                    normalizedItemText ===
+                                        normalizedSchemaText ||
+                                    normalizedItemText.includes(
+                                        normalizedSchemaText,
+                                    )
+                                ) {
                                     // Klik opsi tersebut
-                                    item.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+                                    item.dispatchEvent(
+                                        new MouseEvent("mousedown", {
+                                            bubbles: true,
+                                        }),
+                                    );
                                     item.click();
 
                                     console.log(
-                                        `[Robot] Berhasil memilih opsi dropdown "${valueToFill}" untuk "${field.label}"`
+                                        `[Robot] Berhasil memilih opsi dropdown "${valueToFill}" untuk "${field.label}"`,
                                     );
                                     optionFound = true;
                                     break;
@@ -224,15 +245,55 @@ async function runDynamicAutofillForm(
                             }
 
                             if (!optionFound) {
-                                console.warn(`[Robot] Opsi "${valueToFill}" tidak ditemukan di dalam list dropdown.`);
+                                console.warn(
+                                    `[Robot] Opsi "${valueToFill}" tidak ditemukan di dalam list dropdown.`,
+                                );
                                 document.body.click();
                             }
                         } else {
-                            console.warn("[Robot] Kontainer daftar opsi (popup list) tidak ditemukan di DOM.");
+                            console.warn(
+                                "[Robot] Kontainer daftar opsi (popup list) tidak ditemukan di DOM.",
+                            );
                         }
                     } else {
                         console.warn(
-                            `[Robot] Elemen dropdown tidak ditemukan pada komponen "${field.label}".`
+                            `[Robot] Elemen dropdown tidak ditemukan pada komponen "${field.label}".`,
+                        );
+                    }
+                } else if (field.type === "text" || field.type === "number") {
+                    const inputEl = targetQuestionEl.querySelector(
+                        "input.sd-input, textarea.sd-input",
+                    );
+                    if (inputEl) {
+                        inputEl.dispatchEvent(
+                            new MouseEvent("mousedown", { bubbles: true }),
+                        );
+                        inputEl.click();
+                        inputEl.focus();
+                        inputEl.value = valueToFill;
+                        inputEl.dispatchEvent(
+                            new InputEvent("input", {
+                                bubbles: true,
+                                data: String(valueToFill),
+                                inputType: "insertText",
+                            }),
+                        );
+                        await new Promise(r => setTimeout(r, 50));
+                        inputEl.dispatchEvent(
+                            new Event("change", {
+                                bubbles: true,
+                            }),
+                        );
+                        await new Promise(r => setTimeout(r, 50));
+                        inputEl.blur();
+                        await new Promise(r => setTimeout(r, 100));
+                        console.log(
+                            `[Robot] Berhasil mengisi "${field.label}" dengan "${valueToFill}"`,
+                        );
+                        optionFound = true;
+                    } else {
+                        console.warn(
+                            `[Robot] Input tidak ditemukan untuk "${field.label}".`,
                         );
                     }
                 } else {
@@ -283,42 +344,64 @@ async function runDynamicAutofillForm(
                 );
             }
             await new Promise((resolve) => setTimeout(resolve, 300));
-        };
-    }
-
-    console.log("[Robot] Menjalankan pengisian pertama...");
-    await fillQuestion();
-    await new Promise((r) => setTimeout(r, 2000));
-    await fillQuestion();
-    await new Promise((r) => setTimeout(r, 500));
-
-    const buttons = document.querySelectorAll("button, input[type='button']");
-    let submitButton = null;
-
-    for (const btn of buttons) {
-        const btnText = (btn.textContent || btn.value || "").trim();
-        if (
-            btnText.includes("Simpan") ||
-            btnText.includes("Selesai") ||
-            btn.classList.contains("sd-navigation__complete-btn")
-        ) {
-            submitButton = btn;
-            break;
         }
     }
 
-    if (submitButton) {
-        console.log("[Robot] Menekan tombol simpan form...");
-        try {
-            chrome.runtime.sendMessage({ type: "FORM_SUBMIT_SUCCESS" });
-        } catch (e) {
-            console.warn(
-                "[Robot] Gagal mengirim pesan sukses (konteks berubah):",
-                e,
-            );
+    let hasValidationError = true;
+    const MAX_RETRY = 3;
+    for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
+        console.log(
+            `[Robot] Mengisi form (percobaan ${attempt}/${MAX_RETRY})...`,
+        );
+        await fillQuestion();
+        await new Promise((r) => setTimeout(r, 500));
+
+        const buttons = document.querySelectorAll(
+            "button, input[type='button']",
+        );
+        let submitButton = null;
+        for (const btn of buttons) {
+            const btnText = (btn.textContent || btn.value || "").trim();
+            if (
+                btnText.includes("Simpan") ||
+                btnText.includes("Selesai") ||
+                btnText.includes("Kirim") ||
+                btn.classList.contains("sd-navigation__complete-btn")
+            ) {
+                submitButton = btn;
+                break;
+            }
+        }
+        if (!submitButton) {
+            console.error("[Robot] Gagal menemukan tombol submit.");
+            return;
+        }
+        if (attempt == 1) {
+            try {
+                chrome.runtime.sendMessage({ type: "FORM_SUBMIT_SUCCESS" });
+            } catch (e) {
+                console.warn(
+                    "[Robot] Gagal mengirim pesan sukses (konteks berubah):",
+                    e,
+                );
+            }
         }
         submitButton.click();
-    } else {
-        console.error("[Robot] Gagal menemukan tombol Simpan/Selesai.");
+
+        await new Promise((r) => setTimeout(r, 1500));
+        hasValidationError =
+            document.querySelector(".sd-question--error") !== null;
+        if (!hasValidationError) {
+            console.log("[Robot] Form berhasil dikirim.");
+            break;
+        }
+        console.warn(`[Robot] Validasi gagal pada percobaan ${attempt}.`);
+    }
+    if (hasValidationError) {
+        console.error("[Robot] Gagal mengisi form setelah beberapa percobaan.");
+        const homeButton = [...document.querySelectorAll("button")].find(
+            (btn) => btn.textContent?.trim() === "Kembali ke Halaman Utama",
+        );
+        homeButton?.click();
     }
 }

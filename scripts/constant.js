@@ -663,6 +663,7 @@ const defaultRunSettingData = {
     rapor: false,
     pemeriksaan: {
         // ...defaultRunPemeriksaanMandiri,
+        mulai: false,
         mandiri: false,
     },
 };
@@ -948,6 +949,14 @@ const pemeriksaanDataSchema = {
                 options: YaTidakOptions,
             },
             {
+                key: "riwayat_merokok_terakhir",
+                label: "Apakah Anda pernah memiliki riwayat merokok dalam 15 tahun terakhir?",
+                type: "enum",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
+            {
                 key: "terpapar_asap_rokok_pasif",
                 label: "Apakah Anda terpapar atau menghirup asap rokok dari orang lain di rumah, lingkungan atau tempat kerja dalam 1 bulan terakhir?",
                 type: "enum",
@@ -1020,8 +1029,22 @@ const pemeriksaanDataSchema = {
                 label: "Apakah Anda melakukan aktivitas fisik sedang pada kegiatan rumah tangga/domestik seperti membersihkan rumah/lingkungan (menyapu, menata perabotan), mencuci baju manual, memasak, mengasuh anak, atau mengangkat beban dengan berat < 20 kg?",
                 type: "enum-select",
                 required: true,
-                default: "Tidak",
+                default: "Ya",
                 options: YaTidakOptions,
+            },
+            {
+                key: "aktivitas_sedang_hari",
+                label: "Berapa hari dalam satu minggu Anda melakukan aktivitas tersebut?",
+                type: "text",
+                required: true,
+                default: "6",
+            },
+            {
+                key: "aktivitas_sedang_menit",
+                label: "Dalam satu hari berapa menit waktu yang digunakan untuk melakukan aktivitas tersebut?",
+                type: "text",
+                required: true,
+                default: "30",
             },
             {
                 key: "aktivitas_sedang_kerja",
@@ -1091,6 +1114,14 @@ const pemeriksaanDataSchema = {
                 default: "Tidak",
                 options: YaTidakOptions,
             },
+            {
+                key: "catatan_imunisasi",
+                label: "Apakah memiliki dan membawa catatan imunisasi anak ( buku KIA atau dokumen catatan lainnya) atau mengingat riwayat imunisasi anak?",
+                type: "enum-select",
+                required: true,
+                default: "Tidak",
+                options: YaTidakOptions,
+            },
         ],
     },
     riwayatImunisasiTetanusCatin: {
@@ -1117,7 +1148,7 @@ const pemeriksaanDataSchema = {
         input: [
             {
                 key: "pernah_hubungan_seksual",
-                label: "Apakah pernah melakukan hubungan intim/seksual? *",
+                label: "Apakah pernah melakukan hubungan intim/seksual?",
                 type: "enum",
                 required: true,
                 default: "Tidak",

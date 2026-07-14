@@ -44,9 +44,8 @@ function initTanggalPemeriksaan() {
     });
 }
 
-
 function summarizeColumn(colName) {
-    const aktifData = getAktifData()
+    const aktifData = getAktifData();
 
     const counts = {};
     aktifData.forEach((row) => {
@@ -96,7 +95,7 @@ function renderSummary() {
                 <td>${s.count}</td>
                 <td>${s.percent}</td>
                 </tr>
-            `
+            `,
                 )
                 .join("")}
             </tbody>
@@ -113,6 +112,7 @@ function loadDataTable() {
     theData.forEach((item) => {
         const btnId = `dropdownMenuButton-${item.no}`;
         const tr = document.createElement("tr");
+        tr.dataset.id = item.no;
 
         let cellValid = `<td class="text-center"><span class="badge bg-success">Valid ✓</span></td>`;
         if (!item.is_valid) {
@@ -211,6 +211,7 @@ function clearStatus(no) {
         find.pendaftaran = "";
         find.kehadiran = "";
         find.pemeriksaan = "";
+        find.pemeriksaan_mandiri = "";
         find.keterangan = "";
 
         saveAktifData(aktifData);
@@ -327,7 +328,13 @@ async function runOneByOne(no, key) {
         } else if (key == "pemeriksaan") {
             const config = getRunSettingData();
             const defDataPemeriksaan = getDefaultPemeriksaanData();
-            iData = await runCheckPemeriksaan(config, iData, defData, defDataPemeriksaan);
+            iData = await runCheckPemeriksaan(
+                config,
+                iData,
+                defData,
+                defDataPemeriksaan,
+                true,
+            );
         }
 
         aktifData[index] = iData;
@@ -356,16 +363,31 @@ function runProcess() {
     }
     executeOtomasiProses(runSetData);
 }
-
-async function runCheckPemeriksaan(config, iData, defData, defDataPemeriksaan) {
-    let eData = await runPemeriksaan(iData, defData);
-    if (config.pemeriksaan?.mandiri) {
-        if (
-            allowNextProcess(eData.pemeriksaan) &&
-            !skipStatus(eData.pemeriksaan_mandiri)
-        ) {
-            eData = await runPemeriksaanMandiri(eData, defDataPemeriksaan, pemeriksaanDataSchema);
-        }
+async function runCheckPemeriksaan(
+    config,
+    iData,
+    defData,
+    defDataPemeriksaan,
+    ignoreStatus = false,
+) {
+    let eData = iData;
+    const shouldRun = (status) => ignoreStatus || !skipStatus(status);
+    const needRunPemeriksaan = Object.values(config.pemeriksaan ?? {}).some(
+        Boolean,
+    );
+    if (needRunPemeriksaan) {
+        eData = await runPemeriksaan(eData, defData);
+    }
+    if (
+        config.pemeriksaan?.mandiri &&
+        allowNextProcess(eData.pemeriksaan) &&
+        shouldRun(eData.pemeriksaan_mandiri)
+    ) {
+        eData = await runPemeriksaanMandiri(
+            eData,
+            defDataPemeriksaan,
+            pemeriksaanDataSchema,
+        );
     }
     return eData;
 }
@@ -381,6 +403,10 @@ async function executeOtomasiProses(config) {
     for (let i = 0; i < listData.length; i++) {
         let iData = { ...listData[i] };
         if (!iData.is_valid) continue;
+        const tr = document.querySelector(`tr[data-id="${iData.no}"]`);
+        if (tr) {
+            tr.classList.add("table-primary");
+        }
         if (config.pendaftaran) {
             if (!skipStatus(iData.pendaftaran)) {
                 iData = await runPendaftaran(iData, defData);
@@ -399,7 +425,12 @@ async function executeOtomasiProses(config) {
                 allowNextProcess(iData.pendaftaran) &&
                 allowNextProcess(iData.kehadiran)
             ) {
-                iData = await runCheckPemeriksaan(config, iData, defData, defDataPemeriksaan);
+                iData = await runCheckPemeriksaan(
+                    config,
+                    iData,
+                    defData,
+                    defDataPemeriksaan,
+                );
             }
         }
         listData[i] = iData;
