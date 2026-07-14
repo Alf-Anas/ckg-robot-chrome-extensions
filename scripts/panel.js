@@ -287,6 +287,7 @@ async function executeOtomasiProses(config) {
     showLoading();
 
     const defData = getDefaultData();
+    const defDataPemeriksaan = getDefaultPemeriksaanData();
     const listData = getAktifData();
 
     for (let i = 0; i < listData.length; i++) {
@@ -318,7 +319,7 @@ async function executeOtomasiProses(config) {
                 allowNextProcess(iData.pemeriksaan) &&
                 !skipStatus(iData.pemeriksaan_mandiri)
             ) {
-                iData = await runPemeriksaanMandiri(iData, defData, pemeriksaanDataSchema);
+                iData = await runPemeriksaanMandiri(iData, defDataPemeriksaan, pemeriksaanDataSchema);
             }
         }
         listData[i] = iData;

@@ -151,7 +151,8 @@ async function runDynamicAutofillForm(
     async function fillQuestion() {
         // 2. Iterasi setiap field input yang ada di dalam skema
         for (const field of sectionSchema.input) {
-            const valueToFill = field.default;
+            const defKey = sectionSchema.key + "_" + field.key
+            const valueToFill = defData[defKey] || field.default;
 
             if (valueToFill === undefined || valueToFill === null) return;
 
