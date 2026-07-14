@@ -233,8 +233,8 @@ function processMappingAndSave() {
             ) {
                 rawValue = rawValue
                     ? rawValue
-                        .toString()
-                        .substring(0, field.validation.maxLength)
+                          .toString()
+                          .substring(0, field.validation.maxLength)
                     : "";
             }
 
@@ -504,56 +504,83 @@ function downloadExcelAktifData() {
 }
 
 function initDefaultInputsPemeriksaan() {
-    const container = document.getElementById("defaultValuesPemeriksaanContainer");
+    const container = document.getElementById(
+        "defaultValuesPemeriksaanContainer",
+    );
     const currentSettings = getDefaultPemeriksaanData();
 
     // Loop data schema untuk dijadikan elemen form select HTML
-    Object.keys(pemeriksaanDataSchema).forEach(catKey => {
+    Object.keys(pemeriksaanDataSchema).forEach((catKey) => {
         const category = pemeriksaanDataSchema[catKey];
 
-        category.input.forEach(inputItem => {
+        category.input.forEach((inputItem) => {
             const uniqueId = `${catKey}_${inputItem.key}`;
-            const savedValue = currentSettings[uniqueId] !== undefined ? currentSettings[uniqueId] : inputItem.default;
+            const savedValue =
+                currentSettings[uniqueId] !== undefined
+                    ? currentSettings[uniqueId]
+                    : inputItem.default;
 
             const itemWrapper = document.createElement("div");
             itemWrapper.className = "flex-shrink-0 me-2";
             itemWrapper.style.width = "220px";
 
-            let optionsArray = [];
-            if (Array.isArray(inputItem.options)) {
-                optionsArray = inputItem.options;
-            }
+            let controlHTML = "";
 
-            const optionsHTML = optionsArray.map(opt => {
-                const isSelected = opt === savedValue ? "selected" : "";
-                return `<option value="${opt}" ${isSelected}>${opt}</option>`;
-            }).join("");
-
-            itemWrapper.innerHTML = `
-                <div class="form-group p-1 border rounded bg-light h-100 d-flex flex-column justify-content-between">
-                    <label for="${uniqueId}" 
-                           class="form-label small text-truncate fw-bold mb-1 d-block" 
-                           title="${category.label} - ${inputItem.label}">
-                        ${category.label}<br><span class="text-muted fw-normal">${inputItem.label}</span>
-                    </label>
+            if (inputItem.type === "text" || inputItem.type === "number") {
+                const inputType =
+                    inputItem.type === "number" ? "number" : "text";
+                const stepAttribute =
+                    inputType === "number" ? 'step="any"' : "";
+                controlHTML = `
+                    <input type="${inputType}" 
+                        id="${uniqueId}" 
+                        ${stepAttribute}
+                        class="form-control form-control-sm data-default-input" 
+                        value="${savedValue !== null ? savedValue : ""}">
+                `;
+            } else {
+                let optionsArray = [];
+                if (Array.isArray(inputItem.options)) {
+                    optionsArray = inputItem.options;
+                }
+                const optionsHTML = optionsArray
+                    .map((opt) => {
+                        const isSelected = opt === savedValue ? "selected" : "";
+                        return `<option value="${opt}" ${isSelected}>${opt}</option>`;
+                    })
+                    .join("");
+                controlHTML = `
                     <select id="${uniqueId}" class="form-select form-select-sm data-default-input">
                         ${optionsHTML}
                     </select>
-                </div>
-            `;
+                `;
+            }
+
+            itemWrapper.innerHTML = `
+                    <div class="form-group p-1 border rounded bg-light h-100 d-flex flex-column justify-content-between">
+                        <label for="${uniqueId}" 
+                            class="form-label small text-truncate fw-bold mb-1 d-block" 
+                            title="${category.label} - ${inputItem.label}">
+                            ${category.label}<br><span class="text-muted fw-normal">${inputItem.label}</span>
+                        </label>
+                        ${controlHTML}
+                    </div>
+                `;
             container.appendChild(itemWrapper);
         });
     });
 
-    document.getElementById("btnSaveDefaultPemeriksaan").addEventListener("click", () => {
-        const payload = {};
-        const inputs = document.querySelectorAll(".data-default-input");
+    document
+        .getElementById("btnSaveDefaultPemeriksaan")
+        .addEventListener("click", () => {
+            const payload = {};
+            const inputs = document.querySelectorAll(".data-default-input");
 
-        inputs.forEach(selectElement => {
-            payload[selectElement.id] = selectElement.value;
+            inputs.forEach((selectElement) => {
+                payload[selectElement.id] = selectElement.value;
+            });
+
+            saveDefaultPemeriksaanData(payload);
+            showSuccess("Berhasil menyimpan data default pemeriksaan!");
         });
-
-        saveDefaultPemeriksaanData(payload);
-        showSuccess("Berhasil menyimpan data default pemeriksaan!");
-    });
 }

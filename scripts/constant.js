@@ -1035,14 +1035,14 @@ const pemeriksaanDataSchema = {
             {
                 key: "aktivitas_sedang_hari",
                 label: "Berapa hari dalam satu minggu Anda melakukan aktivitas tersebut?",
-                type: "text",
+                type: "number",
                 required: true,
                 default: "6",
             },
             {
                 key: "aktivitas_sedang_menit",
                 label: "Dalam satu hari berapa menit waktu yang digunakan untuk melakukan aktivitas tersebut?",
-                type: "text",
+                type: "number",
                 required: true,
                 default: "30",
             },
