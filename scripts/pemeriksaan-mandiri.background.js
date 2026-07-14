@@ -150,7 +150,7 @@ async function runDynamicAutofillForm(
 
     async function fillQuestion() {
         // 2. Iterasi setiap field input yang ada di dalam skema
-        sectionSchema.input.forEach((field) => {
+        for (const field of sectionSchema.input) {
             const valueToFill = field.default;
 
             if (valueToFill === undefined || valueToFill === null) return;
@@ -184,51 +184,57 @@ async function runDynamicAutofillForm(
             // 4. Jika kontainer pertanyaan ditemukan, eksekusi berdasarkan field.type dari skema
             if (targetQuestionEl) {
                 let optionFound = false;
-
                 if (field.type === "enum-select") {
-                    // --- LOGIKA UNTUK DROPDOWN (SELECT) ---
-                    const selectEl = targetQuestionEl.querySelector("select");
+                    const dropdownEl = targetQuestionEl.querySelector(".sd-dropdown");
 
-                    if (selectEl) {
+                    if (dropdownEl) {
+                        dropdownEl.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+                        dropdownEl.click();
+                        await new Promise((resolve) => setTimeout(resolve, 200));
+
                         const normalizedSchemaText = valueToFill
                             .replace(/\s+/g, " ")
-                            .trim();
+                            .trim()
+                            .toLowerCase();
+                        const listContainer = targetQuestionEl.querySelector(".sv-list__container") || document.body.querySelector(".sv-list__container");
 
-                        // Cari <option> yang teks atau value-nya cocok
-                        const options = selectEl.querySelectorAll("option");
-                        for (const opt of options) {
-                            const normalizedOptionText = opt.textContent
-                                .replace(/\s+/g, " ")
-                                .trim();
-                            const normalizedOptionValue = opt.value
-                                .replace(/\s+/g, " ")
-                                .trim();
+                        if (listContainer) {
+                            const items = listContainer.querySelectorAll(".sv-list__item, [role='option'], .sd-list__item");
 
-                            if (
-                                normalizedOptionText === normalizedSchemaText ||
-                                normalizedOptionValue === normalizedSchemaText
-                            ) {
-                                selectEl.value = opt.value; // Set value pada elemen select asli
+                            let optionFound = false;
 
-                                // Trigger event agar framework UI (seperti SurveyJS) menangkap perubahannya
-                                selectEl.dispatchEvent(
-                                    new Event("change", { bubbles: true }),
-                                );
+                            for (const item of items) {
+                                const normalizedItemText = item.textContent
+                                    .replace(/\s+/g, " ")
+                                    .trim()
+                                    .toLowerCase();
 
-                                console.log(
-                                    `[Robot] Berhasil memilih select "${valueToFill}" untuk "${field.label}"`,
-                                );
-                                optionFound = true;
-                                break;
+                                if (normalizedItemText === normalizedSchemaText || normalizedItemText.includes(normalizedSchemaText)) {
+                                    // Klik opsi tersebut
+                                    item.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+                                    item.click();
+
+                                    console.log(
+                                        `[Robot] Berhasil memilih opsi dropdown "${valueToFill}" untuk "${field.label}"`
+                                    );
+                                    optionFound = true;
+                                    break;
+                                }
                             }
+
+                            if (!optionFound) {
+                                console.warn(`[Robot] Opsi "${valueToFill}" tidak ditemukan di dalam list dropdown.`);
+                                document.body.click();
+                            }
+                        } else {
+                            console.warn("[Robot] Kontainer daftar opsi (popup list) tidak ditemukan di DOM.");
                         }
                     } else {
                         console.warn(
-                            `[Robot] Elemen <select> tidak ditemukan pada komponen "${field.label}" padahal bertipe enum-select.`,
+                            `[Robot] Elemen dropdown tidak ditemukan pada komponen "${field.label}".`
                         );
                     }
                 } else {
-                    // --- LOGIKA UNTUK RADIO BUTTON (Default / Non enum-select) ---
                     const radioItems =
                         targetQuestionEl.querySelectorAll(".sd-item");
 
@@ -275,22 +281,16 @@ async function runDynamicAutofillForm(
                     `[Robot] Elemen pertanyaan dengan label "${field.label}" tidak ditemukan di halaman.`,
                 );
             }
-        });
+            await new Promise((resolve) => setTimeout(resolve, 300));
+        };
     }
 
     console.log("[Robot] Menjalankan pengisian pertama...");
     await fillQuestion();
+    await new Promise((r) => setTimeout(r, 2000));
+    await fillQuestion();
+    await new Promise((r) => setTimeout(r, 500));
 
-    // Jalankan pengisian kedua setelah jeda 2 detik (2000ms)
-    setTimeout(() => {
-        console.log("[Robot] Menjalankan pengisian kedua...");
-        await fillQuestion();
-    }, 1500);
-
-    // 5. Beri jeda singkat sebelum klik simpan agar sistem web sempat memproses state data
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 6. Cari tombol Simpan / Selesai (SurveyJS biasanya menggunakan selector .sd-navigation__complete-btn atau teks "Simpan")
     const buttons = document.querySelectorAll("button, input[type='button']");
     let submitButton = null;
 
@@ -308,8 +308,6 @@ async function runDynamicAutofillForm(
 
     if (submitButton) {
         console.log("[Robot] Menekan tombol simpan form...");
-
-        // Kirim info sukses SEBELUM klik agar koneksi tidak terputus karena redirect
         try {
             chrome.runtime.sendMessage({ type: "FORM_SUBMIT_SUCCESS" });
         } catch (e) {

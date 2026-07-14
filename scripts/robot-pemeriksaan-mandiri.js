@@ -106,6 +106,14 @@ async function runPemeriksaanMandiriAutofill({
                 rows.forEach((row) => {
                     const cells = row.querySelectorAll("td");
                     if (cells.length < 3) return;
+ 
+                    const statusImg = cells[1].querySelector("img");
+                    if (statusImg) {
+                        const imgSrc = statusImg.getAttribute("src") || ""; 
+                        if (imgSrc.includes("icon-success.svg") && !imgSrc.includes("icon-success-gray.svg")) {
+                            return;
+                        }
+                    }
 
                     const namaLayananHTML = cells[0].textContent.trim();
                     const btnInput = cells[2].querySelector("button");
