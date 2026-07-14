@@ -400,6 +400,12 @@ async function executeOtomasiProses(config) {
     const defDataPemeriksaan = getDefaultPemeriksaanData();
     const listData = getAktifData();
 
+    function updateRow(index, data) {
+        listData[index] = data;
+        saveAktifData(listData);
+        loadDataTable();
+    }
+
     for (let i = 0; i < listData.length; i++) {
         let iData = { ...listData[i] };
         if (!iData.is_valid) continue;
@@ -410,6 +416,7 @@ async function executeOtomasiProses(config) {
         if (config.pendaftaran) {
             if (!skipStatus(iData.pendaftaran)) {
                 iData = await runPendaftaran(iData, defData);
+                updateRow(i, iData);
             }
         }
         if (config.kehadiran) {
@@ -418,6 +425,7 @@ async function executeOtomasiProses(config) {
                 !skipStatus(iData.kehadiran)
             ) {
                 iData = await runKehadiran(iData, defData);
+                updateRow(i, iData);
             }
         }
         if (config.pemeriksaan) {
@@ -431,11 +439,12 @@ async function executeOtomasiProses(config) {
                     defData,
                     defDataPemeriksaan,
                 );
+                updateRow(i, iData);
             }
         }
-        listData[i] = iData;
-        saveAktifData(listData);
-        loadDataTable();
+        if (tr) {
+            tr.classList.remove("table-primary");
+        }
     }
 
     hideLoading();
