@@ -61,12 +61,18 @@ function loadDataTable() {
                                     id="${btnId}" data-bs-toggle="dropdown" aria-expanded="false">
                                 Aksi
                             </button>
-                            <ul class="dropdown-menu shadow" aria-labelledby="${btnId}">
+                            <ul class="dropdown-menu shadow compact-menu" aria-labelledby="${btnId}">
+                                 <li class="px-3 pt-1 pb-1 dropdown-header">
+                                    <small class="text-muted d-block text-center">${item.nama}</small>
+                                    <small class="text-muted d-block text-center" style="font-size: smaller;">${item.nik}</small>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger action-trigger py-1" data-action="invalid" href="#">⚠️ Tandai Tidak Valid</a></li>
                                 <li><a class="dropdown-item text-success action-trigger py-1" data-action="clear-status" href="#">🔄 Bersihkan Status</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item action-trigger py-1" data-action="run" data-field="pendaftaran" href="#">⚡ Run Pendaftaran</a></li>
                                 <li><a class="dropdown-item action-trigger py-1" data-action="run" data-field="kehadiran" href="#">⚡ Run Kehadiran</a></li>
+                                <li><a class="dropdown-item action-trigger py-1" data-action="run" data-field="pemeriksaan" href="#">⚡ Run Pemeriksaan</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item action-trigger py-1" data-action="status" data-field="pendaftaran" data-val="OK" href="#">✓ Pendaftaran OK</a></li>
                                 <li><a class="dropdown-item action-trigger py-1" data-action="status" data-field="kehadiran" data-val="OK" href="#">✓ Kehadiran OK</a></li>
@@ -253,6 +259,10 @@ async function runOneByOne(no, key) {
             iData = await runPendaftaran(iData, defData);
         } else if (key == "kehadiran") {
             iData = await runKehadiran(iData, defData);
+        } else if (key == "pemeriksaan") {
+            const config = getRunSettingData();
+            const defDataPemeriksaan = getDefaultPemeriksaanData();
+            iData = await runCheckPemeriksaan(config, iData, defData, defDataPemeriksaan);
         }
 
         aktifData[index] = iData;
@@ -280,6 +290,19 @@ function runProcess() {
         return;
     }
     executeOtomasiProses(runSetData);
+}
+
+async function runCheckPemeriksaan(config, iData, defData, defDataPemeriksaan) {
+    let eData = await runPemeriksaan(iData, defData);
+    if (config.pemeriksaan?.mandiri) {
+        if (
+            allowNextProcess(eData.pemeriksaan) &&
+            !skipStatus(eData.pemeriksaan_mandiri)
+        ) {
+            eData = await runPemeriksaanMandiri(eData, defDataPemeriksaan, pemeriksaanDataSchema);
+        }
+    }
+    return eData;
 }
 
 async function executeOtomasiProses(config) {
@@ -311,15 +334,7 @@ async function executeOtomasiProses(config) {
                 allowNextProcess(iData.pendaftaran) &&
                 allowNextProcess(iData.kehadiran)
             ) {
-                iData = await runPemeriksaan(iData, defData);
-            }
-        }
-        if (config.pemeriksaan?.mandiri) {
-            if (
-                allowNextProcess(iData.pemeriksaan) &&
-                !skipStatus(iData.pemeriksaan_mandiri)
-            ) {
-                iData = await runPemeriksaanMandiri(iData, defDataPemeriksaan, pemeriksaanDataSchema);
+                iData = await runCheckPemeriksaan(config, iData, defData, defDataPemeriksaan);
             }
         }
         listData[i] = iData;
