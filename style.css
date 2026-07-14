@@ -1,31 +1,48 @@
 body {
-    width: 100%;
-    /* max-height: 500px; */
-    font-size: 14px;
-    overflow-y: auto;
+  width: 100%;
+  /* max-height: 500px; */
+  font-size: 14px;
+  overflow-y: auto;
 }
 body.minimized {
-    width: 350px;
-    height: 30px;
-    overflow: hidden;
+  width: 350px;
+  height: 30px;
+  overflow: hidden;
 }
 .hide-on-minimized {
-    transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 body.minimized .hide-on-minimized {
-    display: none !important;
+  display: none !important;
 }
 
 #output {
-    max-height: 350px;
-    overflow-y: auto;
+  max-height: 350px;
+  overflow-y: auto;
 }
 
 .table-compact {
-    font-size: 12px; /* kecilkan font */
+  font-size: 12px; /* kecilkan font */
 }
 .table-compact td,
 .table-compact th {
-    padding: 0.25rem 0.5rem; /* kecilkan padding */
+  padding: 0.25rem 0.5rem; /* kecilkan padding */
+}
+
+.dropdown-menu.compact-menu {
+  font-size: 0.82rem;
+}
+
+.dropdown-menu.compact-menu .dropdown-item {
+  padding: 0.2rem 0.8rem;
+  line-height: 1.2;
+}
+
+.dropdown-menu.compact-menu .dropdown-header {
+  padding: 0.35rem 0.8rem;
+}
+
+.dropdown-menu.compact-menu .dropdown-divider {
+  margin: 0.2rem 0;
 }
