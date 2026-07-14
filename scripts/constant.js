@@ -1111,7 +1111,7 @@ const pemeriksaanDataSchema = {
                 label: "Apakah anak pernah memperoleh imunisasi saat usia 0 sd 24 bulan",
                 type: "enum-select",
                 required: true,
-                default: "Tidak",
+                default: "Ya",
                 options: YaTidakOptions,
             },
             {
