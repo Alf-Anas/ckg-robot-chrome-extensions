@@ -265,28 +265,11 @@ async function runDynamicAutofillForm(
                         "input.sd-input, textarea.sd-input",
                     );
                     if (inputEl) {
-                        inputEl.dispatchEvent(
-                            new MouseEvent("mousedown", { bubbles: true }),
-                        );
-                        inputEl.click();
-                        inputEl.focus();
-                        inputEl.value = valueToFill;
-                        inputEl.dispatchEvent(
-                            new InputEvent("input", {
-                                bubbles: true,
-                                data: String(valueToFill),
-                                inputType: "insertText",
-                            }),
-                        );
-                        await new Promise(r => setTimeout(r, 50));
-                        inputEl.dispatchEvent(
-                            new Event("change", {
-                                bubbles: true,
-                            }),
-                        );
-                        await new Promise(r => setTimeout(r, 50));
-                        inputEl.blur();
-                        await new Promise(r => setTimeout(r, 100));
+                        forceInput(inputEl, valueToFill); 
+
+                        // Final rest period
+                        await new Promise((r) => setTimeout(r, 100));
+
                         console.log(
                             `[Robot] Berhasil mengisi "${field.label}" dengan "${valueToFill}"`,
                         );
@@ -348,7 +331,7 @@ async function runDynamicAutofillForm(
     }
 
     let hasValidationError = true;
-    const MAX_RETRY = 3;
+    const MAX_RETRY = 4;
     for (let attempt = 1; attempt <= MAX_RETRY; attempt++) {
         console.log(
             `[Robot] Mengisi form (percobaan ${attempt}/${MAX_RETRY})...`,
