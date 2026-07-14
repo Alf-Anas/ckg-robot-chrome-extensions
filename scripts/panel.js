@@ -16,6 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("runProcessBtn")
         .addEventListener("click", runProcess);
+    document
+        .getElementById("btnRefreshSummary")
+        .addEventListener("click", renderSummary);
 });
 
 function initTanggalPemeriksaan() {
@@ -38,6 +41,68 @@ function initTanggalPemeriksaan() {
 
     selectEl.addEventListener("change", function () {
         localStorage.setItem(LOCAL_STORAGE.TGL_PEMERIKSAAN, this.value);
+    });
+}
+
+
+function summarizeColumn(colName) {
+    const aktifData = getAktifData()
+
+    const counts = {};
+    aktifData.forEach((row) => {
+        let val = row[colName] || "(Kosong)";
+        counts[val] = (counts[val] || 0) + 1;
+    });
+    const total = aktifData.length;
+    return Object.entries(counts).map(([val, count]) => ({
+        value: val,
+        count,
+        percent: ((count / total) * 100).toFixed(2) + "%",
+    }));
+}
+
+function renderSummary() {
+    const container = document.getElementById("summary");
+    container.innerHTML = "";
+    const cols = [
+        "status_input",
+        "status_usia",
+        "keterangan",
+        "pendaftaran",
+        "kehadiran",
+        "pemeriksaan",
+        "pemeriksaan_mandiri",
+        "rapor",
+    ];
+
+    cols.forEach((col) => {
+        const summary = summarizeColumn(col);
+        let table = `
+        <b class="mt-2 text-capitalize">${col}</b>
+        <table class="table table-bordered table-sm">
+            <thead class="table-light">
+            <tr>
+                <th>Kategori</th>
+                <th>Jumlah</th>
+                <th>Persen</th>
+            </tr>
+            </thead>
+            <tbody>
+            ${summary
+                .map(
+                    (s) => `
+                <tr>
+                <td>${s.value}</td>
+                <td>${s.count}</td>
+                <td>${s.percent}</td>
+                </tr>
+            `
+                )
+                .join("")}
+            </tbody>
+        </table>
+        `;
+        container.innerHTML += table;
     });
 }
 

@@ -96,6 +96,29 @@
         </table>
     </div>
 
+    <div class="accordion accordion-flush my-2" id="accordionSummary">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSummary">
+                <button class="accordion-button py-2 px-3 collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseSummary" aria-expanded="false" aria-controls="collapseSummary"
+                    style="font-size:0.9rem;">
+                    <i class="bi bi-list-check me-2"></i>
+                    Ringkasan
+                </button>
+            </h2>
+
+            <div id="collapseSummary" class="accordion-collapse collapse" aria-labelledby="headingSummary"
+                data-bs-parent="#accordionSummary">
+                <div class="accordion-body p-2">
+                    <button id="btnRefreshSummary" class="btn btn-primary btn-sm w-100 mt-2 mb-1">
+                        Refresh Ringkasan
+                    </button>
+                    <div id="summary"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mt-4">
         <div class="p-3 border rounded bg-light mb-3">
             <!-- Grup Utama -->
